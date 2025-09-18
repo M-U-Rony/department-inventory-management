@@ -1,1 +1,100 @@
 @import "tailwindcss";
+
+:root {
+  --bg: #fbfbfc;
+  --surface: #ffffff;
+  --surface-muted: #f4f5f7;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+}
+
+html[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #0f0f10;
+  --surface-muted: #141415;
+  --text: #e5e7eb;
+  --text-muted: #a3a3a3;
+  --border: #262626;
+  --accent: #60a5fa;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.card-surface {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.muted-surface {
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.muted-text { color: var(--text-muted); }
+.accent { color: var(--accent); }
+.accent-bg { background-color: var(--accent); }
+
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+}
+
+.theme-toggle button {
+  height: 36px;
+  width: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.theme-toggle button:hover {
+  background: var(--surface-muted);
+}
+
+/* Light-mode overrides for existing dark-tailwind utility classes in the app */
+html[data-theme="light"] .bg-neutral-900 { background-color: var(--surface) !important; }
+html[data-theme="light"] .bg-neutral-900\/70 { background-color: color-mix(in srgb, var(--surface) 90%, #000 10%) !important; }
+html[data-theme="light"] .bg-neutral-900\/40 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-900\/20 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800\/60 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800\/50 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800\/40 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800\/30 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-950 { background-color: var(--bg) !important; }
+html[data-theme="light"] .bg-black\/60 { background-color: rgba(0,0,0,0.5) !important; }
+
+html[data-theme="light"] .border-neutral-800 { border-color: var(--border) !important; }
+html[data-theme="light"] .border-neutral-800\/80 { border-color: var(--border) !important; }
+html[data-theme="light"] .border-neutral-800\/70 { border-color: var(--border) !important; }
+html[data-theme="light"] .border-neutral-800\/60 { border-color: var(--border) !important; }
+html[data-theme="light"] .border-neutral-800\/50 { border-color: var(--border) !important; }
+html[data-theme="light"] .border-neutral-700 { border-color: var(--border) !important; }
+
+html[data-theme="light"] .text-neutral-100 { color: var(--text) !important; }
+html[data-theme="light"] .text-neutral-200 { color: var(--text) !important; }
+html[data-theme="light"] .text-neutral-300 { color: var(--text) !important; opacity: 0.8; }
+html[data-theme="light"] .text-neutral-400 { color: var(--text-muted) !important; }
+
+/* Hover state overrides commonly used */
+html[data-theme="light"] .hover\:bg-neutral-800:hover { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .hover\:bg-neutral-700:hover { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .hover\:text-neutral-200:hover { color: var(--text) !important; }
+html[data-theme="light"] .hover\:text-neutral-100:hover { color: var(--text) !important; }
+
+/* Inputs specific used backgrounds */
+html[data-theme="light"] .bg-neutral-950\/60 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-900\/70 { background-color: var(--surface-muted) !important; }
+html[data-theme="light"] .bg-neutral-800\/50 { background-color: var(--surface-muted) !important; }
