@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cpu{
+
+ id         Int      @id @default(autoincrement())
+ name       String
+ processor String
+ ram       String
+ ssd       String?
+ hdd       String?
+ gpu       String?
+ status     String    @default("working")
+ Note       String?
+ createdAt  DateTime  @default(now())
+ updatedAt  DateTime  @updatedAt
+ desk      Desk?
+}
+
+
+model Monitor{
+
+ id         Int      @id @default(autoincrement())
+ name       String
+ status     String    @default("working")
+ Note       String?
+ createdAt  DateTime  @default(now())
+ updatedAt  DateTime  @updatedAt
+ desk      Desk?
+}
+
+model Printer{
+
+ id         Int      @id @default(autoincrement())
+ name       String
+ location   String    @default("Not assigned")
+ status     String    @default("working")
+ Note       String?
+ createdAt  DateTime  @default(now())
+ updatedAt  DateTime  @updatedAt
+  
+}
+
+model Ups{
+
+ id         Int      @id @default(autoincrement())
+ name       String
+ location   String    @default("Not assigned")
+ status     String    @default("working")
+ Note       String?
+ desk       Desk?     
+ createdAt  DateTime  @default(now())
+ updatedAt  DateTime  @updatedAt
+
+}
+
+model Lab {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique 
+  desks      Desk[]   
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Desk {
+  id         Int      @id @default(autoincrement())
+  deskNo     String
+  labId      Int      
+  lab        Lab      @relation(fields: [labId], references: [id])
+  cpuId      Int?     @unique
+  cpu        Cpu?     @relation(fields: [cpuId], references: [id])
+  monitorId  Int?     @unique
+  monitor    Monitor? @relation(fields: [monitorId], references: [id])
+  upsId      Int?     @unique
+  ups        Ups?     @relation(fields: [upsId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
