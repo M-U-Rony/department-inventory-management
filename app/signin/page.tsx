@@ -22,6 +22,15 @@ export default function SignInPage() {
       redirect: true,
       callbackUrl: "/",
     });
+
+    if(res?.ok) {
+      toast.success("Signed in successfully!");
+    }
+
+    if(res?.error) {
+      toast.error("Invalid credentials. Please try again.");
+    }
+    setIsSubmitting(false);
   }
 
   return (

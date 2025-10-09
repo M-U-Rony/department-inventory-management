@@ -1,7 +1,7 @@
 "use client";
 
 import { HiComputerDesktop } from "react-icons/hi2";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect} from "react";
 import { useParams, useRouter } from "next/navigation";
 import DeskInfo from "../../../ui/deskInfo";
 import { HashLoader } from "react-spinners";
