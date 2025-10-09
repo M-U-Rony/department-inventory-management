@@ -1,7 +1,14 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Sidebar({ labs }) {
+interface Lab {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export default function Sidebar({ labs }: { labs: Lab[] }) {
   const router = useRouter();
   const [showInput, setShowInput] = useState(false);
   const [labName, setLabName] = useState("");

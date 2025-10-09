@@ -10,24 +10,25 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const item = searchParams.get("item");
 
-        let unassignedItems = [];
 
         if(item === "monitor") {
 
-            unassignedItems = await prisma.monitor.findMany({
+           let unassignedItems = await prisma.monitor.findMany({
                 where: { desk: null }
             });
+
+            return NextResponse.json(unassignedItems, { status: 200 });
         }
         else if(item === "cpu") {
 
-            unassignedItems = await prisma.cpu.findMany({
+            let unassignedItems = await prisma.cpu.findMany({
                 where: { desk: null }
             });
+
+            return NextResponse.json(unassignedItems, { status: 200 });
         }
 
-        
-
-        return NextResponse.json(unassignedItems, { status: 200 });
+        return NextResponse.json( { message: "Invalid item type" }, { status: 400 });
     } catch (error: any) {
         console.error("Error fetching labs:", error);
         return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });

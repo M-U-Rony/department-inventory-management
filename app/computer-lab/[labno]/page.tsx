@@ -6,11 +6,31 @@ import { useParams, useRouter } from "next/navigation";
 import DeskInfo from "../../../ui/deskInfo";
 import { HashLoader } from "react-spinners";
 
+interface Desk {
+  id: number;
+  deskNo: string;
+  labId: number;
+  cpu: {
+    id: number;
+    name: string;
+    processor: string;
+    ram: string;
+    ssd: string;
+    [key: string]: any;
+  } | null;
+  cpuId: number | null;
+  monitor: any | null;
+  monitorId: number | null;
+  upsId: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function ComputerLabPage() {
   const router = useRouter();
   const params = useParams<{ labno: string }>();
   const [desks, setDesks] = useState([]);
-  const [selectedDesk, setSelectedDesk] = useState(null);
+  const [selectedDesk, setSelectedDesk] = useState(null as Desk | null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +39,7 @@ export default function ComputerLabPage() {
       try {
         const response = await fetch(`/api/getRoom?name=${params.labno}`);
         const data = await response.json();
+        // console.log("Fetched desks:", data);
         setDesks(data);
       } catch (error) {
         console.error("Error fetching desks:", error);
@@ -30,7 +51,7 @@ export default function ComputerLabPage() {
     fetchDesks();
   }, [params.labno]);
 
-  const handleDeskClick = (desk) => {
+  const handleDeskClick = (desk:Desk) => {
     setSelectedDesk(desk);
   };
 
@@ -69,7 +90,7 @@ export default function ComputerLabPage() {
         {Array.from({ length: Math.ceil(desks.length / 2) }).map((_, pairIndex) => (
           
           <div key={pairIndex} className="flex gap-3">
-            {desks.slice(pairIndex * 2, pairIndex * 2 + 2).map((desk) => (
+            {desks.slice(pairIndex * 2, pairIndex * 2 + 2).map((desk:Desk) => (
               <div key={desk.id} className="flex flex-col items-center gap-1">
                 <div
                   onClick={() => handleDeskClick(desk)}
