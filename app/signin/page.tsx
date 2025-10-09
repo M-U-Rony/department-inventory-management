@@ -19,16 +19,17 @@ export default function SignInPage() {
     const res = await signIn("credentials", {
       username,
       password,
-      redirect: true,
-      callbackUrl: "/",
+      redirect: false,
     });
 
     if(res?.ok) {
       toast.success("Signed in successfully!");
+      window.location.href ="/";
     }
 
     if(res?.error) {
       toast.error("Invalid credentials. Please try again.");
+      setPassword("");
     }
     setIsSubmitting(false);
   }

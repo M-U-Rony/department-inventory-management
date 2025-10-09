@@ -1,3 +1,5 @@
+import { PulseLoader } from "react-spinners";
+
 interface SigninFormProps {
   setUsername: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
@@ -65,7 +67,7 @@ export default function SigninForm({setUsername,setPassword,isSubmitting,handleS
             disabled={isSubmitting}
             className="w-full h-11 sm:h-10 rounded-lg accent-bg text-white font-medium disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Signing in…" : "Sign in"}
+            {isSubmitting ? <PulseLoader color="currentColor" />: "Sign in"}
           </button>
         </form>
       </div>

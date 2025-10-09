@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const item = searchParams.get("item");
 
-    console.log("Fetching items of type:", item);
+    // console.log("Fetching items of type:", item);
 
     if (!item) {
         return NextResponse.json({ error: "Item not specified" }, { status: 400 });

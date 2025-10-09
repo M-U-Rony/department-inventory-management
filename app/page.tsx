@@ -8,6 +8,8 @@ import { HashLoader } from "react-spinners";
 export default function Home() {
   const [cpus, setCpus] = useState([]);
   const [monitor, setMonitor] = useState([]);
+  const [printer, setPrinter] = useState([]);
+  const [ups, setUps] = useState([]);
   const [labs, setLabs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +27,22 @@ export default function Home() {
         const response = await fetch("/api/getItems?item=monitor");
         const data = await response.json();
         setMonitor(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+
+      try {
+        const response = await fetch("/api/getItems?item=printer");
+        const data = await response.json();
+        setPrinter(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+
+      try {
+        const response = await fetch("/api/getItems?item=ups");
+        const data = await response.json();
+        setUps(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -52,15 +70,15 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen min-w-screen gap-8">
+    <main className="flex min-w-screen gap-6">
       {/*sidebar*/}
       <Sidebar labs={labs} />
 
-      {/*Dashboard*/}
-
-      <div className="flex gap-8 items-start">
+      <div className="flex flex-wrap gap-6 items-start mt-16 justify-center">
         <SummaryCard title="CPU" items={cpus} />
         <SummaryCard title="MONITOR" items={monitor} />
+        <SummaryCard title="PRINTER" items={printer} />
+        <SummaryCard title="UPS" items={ups} />
       </div>
     </main>
   );
