@@ -2,12 +2,28 @@
 import { useRouter } from "next/navigation";
 
 
+type Item = {
+  id: number;
+  name: string;
+  processor?: string;
+  ram?: string;
+  gpu?: string;
+  hdd?: string;
+  ssd?: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+
 interface CardProps {
   title: string;
-  items: Array<any>;
+  items: Item[];
 }
 
 export default function SummaryCard({ title, items}: CardProps) {
+
+  console.log(items);
 
   const router = useRouter();
 

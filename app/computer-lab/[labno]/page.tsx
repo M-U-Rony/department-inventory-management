@@ -16,10 +16,23 @@ interface Desk {
     processor: string;
     ram: string;
     ssd: string;
-    [key: string]: any;
+    hdd: string;
+    gpu: string;
+    status: string;
+    Note: string | null;
+    createdAt: string;
+    updatedAt: string;
+
   } | null;
   cpuId: number | null;
-  monitor: any | null;
+  monitor: {
+    id: number;
+    name: string;
+    status: string;
+    Note: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
   monitorId: number | null;
   upsId: number | null;
   createdAt: string;

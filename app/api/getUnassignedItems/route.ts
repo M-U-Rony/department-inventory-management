@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
         if(item === "monitor") {
 
-           let unassignedItems = await prisma.monitor.findMany({
+           const unassignedItems = await prisma.monitor.findMany({
                 where: { desk: null }
             });
 
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
         }
         else if(item === "cpu") {
 
-            let unassignedItems = await prisma.cpu.findMany({
+            const unassignedItems = await prisma.cpu.findMany({
                 where: { desk: null }
             });
 
@@ -29,8 +29,8 @@ export async function GET(req: Request) {
         }
 
         return NextResponse.json( { message: "Invalid item type" }, { status: 400 });
-    } catch (error: any) {
-        console.error("Error fetching labs:", error);
-        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Internal Server Error on fetching unassigned items";
+        return NextResponse.json({ message }, { status: 500 });
     }
 }

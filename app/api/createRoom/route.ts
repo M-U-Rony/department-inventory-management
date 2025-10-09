@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     const { name } = JSON.parse(body);
 
-    console.log(name)
+    // console.log(name)
 
     if (!name) {
       return NextResponse.json({ message: "Lab name is required" }, { status: 400 });
@@ -38,8 +38,8 @@ export async function POST(req: Request) {
       { status: 201 }
     );
 
-  } catch (error: any) {
-    console.error("Error creating lab:", error);
-    return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Internal Server Error in creating lab";
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

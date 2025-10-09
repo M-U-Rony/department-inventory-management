@@ -30,8 +30,8 @@ export async function GET(req: Request) {
         // console.log("Fetched labs:", labs);
 
         return NextResponse.json(labs?.desks, { status: 200 });
-    } catch (error: any) {
-        console.error("Error fetching labs:", error);
-        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Internal Server Error on fetching labs";
+    return NextResponse.json({ message }, { status: 500 });
     }
 }
