@@ -49,7 +49,7 @@ export default function SummaryCard({ title, items}: CardProps) {
 
   const total = items.length;
   const issues = items.filter((item) => item.status != "working").length;
-  // const inStore = items.filter((item) => item.desk != null).length;
+  const active = items.filter((item) => item.status == "working").length;
 
   function allitems() {
     router.push(`/items/${title.toLowerCase()}`);
@@ -84,14 +84,12 @@ export default function SummaryCard({ title, items}: CardProps) {
           <p className="muted-text text-xs">Total</p>
           <p className="font-medium">{total}</p>
         </div>
+
         <div className="muted-surface p-2 rounded-lg text-center">
           <p className="muted-text text-xs">Active</p>
-          <p className="font-medium">{total-issues}</p>
+          <p className="font-medium">{active}</p>
         </div>
-        <div className="muted-surface p-2 rounded-lg text-center">
-          <p className="muted-text text-xs">In Store</p>
-          <p className="font-medium">{total}</p>
-        </div>
+
         <div className="muted-surface p-2 rounded-lg text-center">
           <p className="muted-text text-xs">Issue</p>
           <p className="font-medium text-red-500">{issues}</p>
