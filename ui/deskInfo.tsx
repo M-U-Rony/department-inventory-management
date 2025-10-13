@@ -137,12 +137,15 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
               </button>
             ) : (
               <div className="flex flex-col mt-1">
-                <span className="px-2 py-0.5">Name: {desk.monitor.name}</span>
+                <span className="px-2 py-0.5">Name: {desk.monitor?.name}</span>
                 <span className="px-2 py-0.5">
-                  Condition: {desk.monitor.status}
+                  Condition: {desk.monitor?.status}
                 </span>
                 <button
-                  onClick={() => handleItemWithdraw(desk.monitorId, "monitor")}
+                  onClick={() =>
+                    desk.monitorId &&
+                    handleItemWithdraw(desk.monitorId, "monitor")
+                  }
                   className="px-4 py-2 bg-gray-600 text-red-400 rounded cursor-pointer"
                 >
                   Withdraw
@@ -162,21 +165,23 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
               </button>
             ) : (
               <div className="flex flex-col mt-1">
-                <span className="px-2 py-0.5">Name: {desk.cpu.name}</span>
+                <span className="px-2 py-0.5">Name: {desk.cpu?.name}</span>
                 <span className="px-2 py-0.5">
-                  Processor: {desk.cpu.processor}
+                  Processor: {desk.cpu?.processor}
                 </span>
-                <span className="px-2 py-0.5">Ram: {desk.cpu.ram}</span>
-                <span className="px-2 py-0.5">SSD: {desk.cpu.ssd}</span>
-                {desk.cpu.hdd ? (
+                <span className="px-2 py-0.5">Ram: {desk.cpu?.ram}</span>
+                <span className="px-2 py-0.5">SSD: {desk.cpu?.ssd}</span>
+                {desk.cpu?.hdd ? (
                   <span className="px-2 py-0.5">HDD: {desk.cpu.hdd}</span>
                 ) : null}
-                <span className="px-2 py-0.5">GPU:{desk.cpu.gpu}</span>
+                <span className="px-2 py-0.5">GPU:{desk.cpu?.gpu}</span>
                 <span className="px-2 py-0.5">
-                  Condition: {desk.cpu.status}
+                  Condition: {desk.cpu?.status}
                 </span>
                 <button
-                  onClick={() => handleItemWithdraw(desk.cpuId, "cpu")}
+                  onClick={() =>
+                    desk.cpuId && handleItemWithdraw(desk.cpuId, "cpu")
+                  }
                   className="px-4 py-2 bg-gray-600 text-red-400 rounded cursor-pointer"
                 >
                   Withdraw
