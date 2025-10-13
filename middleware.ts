@@ -5,12 +5,24 @@ export async function middleware(req:NextRequest) {
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  if (!token && req.nextUrl.pathname !== "/signin") {
+  if (!token) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
   
   return NextResponse.next();
 }
+
+//api routes
+/* 
+/api/additem
+/api/assignItem
+api/createRoom
+api/deleteitem
+api/getUnassignedItems
+api/updateitem
+api/updateRoomName
+
+*/
 
 export const config = {
   matcher: [

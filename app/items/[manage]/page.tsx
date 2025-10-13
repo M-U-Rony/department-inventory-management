@@ -1,55 +1,100 @@
 "use client";
 
-import { useState,useEffect} from "react";
-import { useRouter,useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import ItemsDashboard from "../../../ui/itemsDashboard";
 import AddItemsForm from "../../../ui/addItemsForm";
+import { HashLoader } from "react-spinners";
+import BackButton from "../../../components/backButton";
+import { Item } from "../../../types/item";
 
+interface ApiItem extends Item {
+  desk?: {
+    deskNo: string;
+    lab: {
+      name: string;
+    };
+  } | null;
+}
 
 export default function ManageItems() {
   const [showForm, setShowForm] = useState(false);
-  const [items, setitems] = useState([])
-  const router = useRouter();
+  const [items, setitems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
   const params = useParams<{ manage: string }>();
 
+  useEffect(() => {
+    async function fetchdata() {
+      try {
+        const res = await fetch(`/api/getItems?item=${params.manage}`, {
+          method: "GET",
+          headers: {
+            contentType: "application/json",
+          },
+        });
 
-  useEffect(()=>{
+        const data: ApiItem[] = await res.json();
 
-    async function fetchdata(){
+        // Transform data to include location information
+        const transformedData: Item[] = data.map((item: ApiItem) => {
+          let location: string | null = null;
 
-      const res = await fetch(`/api/getItems?item=${params.manage}`,{
-        method: 'GET',
-        headers: {
-          contentType: 'application/json'
+          // Check if item is assigned to a desk
+          if (item.desk && item.desk.lab) {
+            location = `${item.desk.lab.name} - ${item.desk.deskNo}`;
+          }
 
-        }
-      })
+          return {
+            ...item,
+            location: location,
+          };
+        });
 
-      const data = await res.json();
-
-      setitems(data);
+        setitems(transformedData);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchdata();
+  }, [params.manage]);
 
-
-  },[params.manage])
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-w-screen min-h-screen">
+        <HashLoader size={60} color="currentColor" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="p-6 cursor-pointer"
-        >
-         &lt; back
-        </button>
+    <div className="p-4 sm:p-6 mx-auto max-w-6xl min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <BackButton />
+        </div>
+        <h1 className="text-3xl font-bold mb-2">
+          {`${params.manage}`.toUpperCase()}
+        </h1>
+        <p className="text-sm text-neutral-400">
+          Manage, add and review all records below.
+        </p>
       </div>
-      {showForm ? <AddItemsForm onClose={() => setShowForm(false)}  title={params.manage}/> : null}
 
-      <ItemsDashboard items={items} onAdd={() => setShowForm(true)} />
+      {showForm ? (
+        <AddItemsForm
+          onClose={() => setShowForm(false)}
+          title={params.manage}
+        />
+      ) : null}
+
+      {/* Content */}
+      <div className="rounded-xl border p-3 sm:p-5">
+        <ItemsDashboard items={items} onAdd={() => setShowForm(true)} />
+      </div>
     </div>
   );
 }

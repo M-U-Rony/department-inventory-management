@@ -4,19 +4,9 @@ import { useParams } from "next/navigation";
 import { MdDelete } from "react-icons/md";
 import About from "./about";
 import { useState } from "react";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
-interface Item {
-  id: string;
-  name: string;
-  processor?: string;
-  ram?: string;
-  hdd?: string;
-  ssd?: string;
-  gpu?: string;
-  status: string;
-  note?: string;
-}
+import toast, { Toaster } from "react-hot-toast";
+import LoadingSpinner from "../components/loadingSpinner";
+import { Item } from "../types/item";
 
 interface ItemsDashboardProps {
   onAdd?: () => void;
@@ -48,12 +38,21 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
     setLoading(id);
 
     try {
-      await fetch(`/api/deleteitem?item=${params.manage}&id=${id}`, {
-        method: "DELETE",
-        headers: {
-          contentType: "application/json",
-        },
-      });
+      const res = await fetch(
+        `/api/deleteitem?item=${params.manage}&id=${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            contentType: "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        toast.error("Failed to delete item");
+      }
+
+      toast.success("Item deleted successfully!");
     } catch (err) {
       console.log(err);
     }
@@ -62,7 +61,8 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
 
   return (
     <section className="w-full">
-      {/* Ensure showItem is not null before rendering About */}
+      <Toaster />
+
       {showInformation && showItem ? (
         <About data={showItem} onClose={handleClose} />
       ) : null}
@@ -81,13 +81,18 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
             <div
               onClick={() => showDetails(item)}
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center cursor-pointer gap-2 sm:gap-4 rounded-lg bg-[color:var(--surface-muted)]/60 border border-[color:var(--border)] px-3 sm:px-4 py-3"
+              className="flex items-center flex-nowrap cursor-pointer gap-2 sm:gap-4 rounded-lg bg-[color:var(--surface-muted)]/60 border border-[color:var(--border)] px-3 sm:px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm sm:text-base">{item.name}</p>
+                {item.location && (
+                  <p className="truncate text-xs text-gray-500 mt-1">
+                    {item.location}
+                  </p>
+                )}
               </div>
 
-              <div className="sm:flex-1 sm:text-center">
+              <div className="flex-1 text-center">
                 <span
                   className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs sm:text-sm border border-[color:var(--border)] bg-[color:var(--surface)] ${
                     item.status === "working"
@@ -99,14 +104,17 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
                 </span>
               </div>
 
-              <div className="flex sm:justify-end">
+              <div className="flex justify-end">
                 <button
                   onClick={(e) => handleDelete(e, item.id)}
                   disabled={loading === item.id}
-                  className="inline-flex h-8 w-8 items-center cursor-pointer justify-center rounded-md border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)]"
+                  className="inline-flex h-8 items-center cursor-pointer justify-center gap-2 rounded-md border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] px-3"
                 >
                   {loading === item.id ? (
-                    <AiOutlineLoading3Quarters />
+                    <>
+                      <LoadingSpinner />
+                      <span>Deleting...</span>
+                    </>
                   ) : (
                     <MdDelete />
                   )}

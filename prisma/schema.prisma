@@ -11,6 +11,7 @@ model Cpu{
 
  id         Int      @id @default(autoincrement())
  name       String
+ brand      String
  processor String
  ram       String
  ssd       String?
@@ -28,6 +29,7 @@ model Monitor{
 
  id         Int      @id @default(autoincrement())
  name       String
+ brand      String
  status     String    @default("working")
  Note       String?
  createdAt  DateTime  @default(now())
@@ -39,6 +41,7 @@ model Printer{
 
  id         Int      @id @default(autoincrement())
  name       String
+ brand      String
  location   String    @default("Not assigned")
  status     String    @default("working")
  Note       String?
@@ -54,7 +57,6 @@ model Ups{
  location   String    @default("Not assigned")
  status     String    @default("working")
  Note       String?
- desk       Desk?     
  createdAt  DateTime  @default(now())
  updatedAt  DateTime  @updatedAt
 
@@ -62,7 +64,8 @@ model Ups{
 
 model Lab {
   id         Int      @id @default(autoincrement())
-  name       String   @unique 
+  name       String   @unique
+  layout     String
   desks      Desk[]   
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -77,8 +80,6 @@ model Desk {
   cpu        Cpu?     @relation(fields: [cpuId], references: [id])
   monitorId  Int?     @unique
   monitor    Monitor? @relation(fields: [monitorId], references: [id])
-  upsId      Int?     @unique
-  ups        Ups?     @relation(fields: [upsId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

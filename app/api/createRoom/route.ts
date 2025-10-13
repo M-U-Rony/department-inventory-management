@@ -11,20 +11,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Request body is empty" }, { status: 400 });
     }
 
-    const { name } = JSON.parse(body);
+    const { name,layout,rows } = JSON.parse(body);
 
-    // console.log(name)
+    console.log(name,layout,rows);
 
-    if (!name) {
+    if (!name || !layout || !rows) {
       return NextResponse.json({ message: "Lab name is required" }, { status: 400 });
     }
 
     const lab = await prisma.lab.create({
-      data: { name },
+      data: { name, layout },
     });
 
-    // Create 60 desks
-    const desksData = Array.from({ length: 60 }).map((_, i) => ({
+    const totalDesk = layout == '1'? 7 * parseInt(rows,10) :  6 * parseInt(rows,10);
+
+    // Create desks
+    const desksData = Array.from({ length: totalDesk }).map((_, i) => ({
       deskNo: `Desk-${i + 1}`,
       labId: lab.id,
     }));
@@ -34,7 +36,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: "Lab created successfully", lab, desksCreated: 60 },
+      { message: "Lab created successfully"},
       { status: 201 }
     );
 

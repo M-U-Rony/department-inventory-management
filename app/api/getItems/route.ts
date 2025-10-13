@@ -19,12 +19,26 @@ export async function GET(req: Request) {
     switch (model) {
   case "cpu":
     allitems = await prisma.cpu.findMany({
+      include: {
+        desk: {
+          include: {
+            lab: true
+          }
+        }
+      },
       orderBy: { id: "asc" },
     });
     break;
 
   case "monitor":
     allitems = await prisma.monitor.findMany({
+      include: {
+        desk: {
+          include: {
+            lab: true
+          }
+        }
+      },
       orderBy: { id: "asc" },
     });
     break;

@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FiMenu, FiPlus, FiSave, FiX, FiMonitor } from "react-icons/fi";
+import { FiMenu, FiPlus, FiX, FiMonitor } from "react-icons/fi";
+import toast, { Toaster } from "react-hot-toast";
+import { FiEdit2, FiSave } from "react-icons/fi";
+import LabCreationForm from "./labCreationForm";
 
 interface Lab {
   id: number;
@@ -11,12 +14,20 @@ interface Lab {
   updatedAt: string;
 }
 
-export default function Sidebar({ labs }: { labs: Lab[] }) {
+export default function Sidebar({
+  labs,
+  onNewLab,
+}: {
+  labs: Lab[];
+  onNewLab: () => void;
+}) {
   const router = useRouter();
-  const [showInput, setShowInput] = useState(false);
-  const [labName, setLabName] = useState("");
+  const [showLabForm, setShowLabForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [editingLabId, setEditingLabId] = useState<number | null>(null);
+  const [editLabName, setEditLabName] = useState("");
+  const [isEditLoading, setIsEditLoading] = useState(false);
 
   // Check screen size and adjust sidebar
   useEffect(() => {
@@ -33,27 +44,54 @@ export default function Sidebar({ labs }: { labs: Lab[] }) {
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
-  function handleSave() {
-    if (labName.trim()) {
-      async function saveLab() {
-        setShowInput(false);
-        setLabName("");
-        try {
-          await fetch("/api/createRoom", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: labName }),
-          });
-        } catch (error) {
-          console.error("Error creating lab:", error);
+  function handleEditName(
+    labId: number,
+    currentName: string,
+    event: React.MouseEvent
+  ) {
+    event.stopPropagation(); // Prevent navigation to lab page
+    setEditingLabId(labId);
+    setEditLabName(currentName);
+  }
+
+  function handleCancelEdit() {
+    setEditingLabId(null);
+    setEditLabName("");
+  }
+
+  async function handleSaveEdit() {
+    if (editLabName.trim() && editingLabId) {
+      setIsEditLoading(true);
+      try {
+        const res = await fetch("/api/updateRoomName", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editingLabId,
+            name: editLabName.trim(),
+          }),
+        });
+
+        if (res.ok) {
+          toast.success("Lab name updated successfully");
+          onNewLab(); // Refresh the lab list
+          setEditingLabId(null);
+          setEditLabName("");
+        } else {
+          toast.error("Failed to update lab name");
         }
+      } catch (error) {
+        console.error("Error in editing lab name:", error);
+        toast.error("Error updating lab name");
+      } finally {
+        setIsEditLoading(false);
       }
-      saveLab();
     }
   }
 
   return (
     <>
+      <Toaster />
       {/* Open Sidebar Button (Mobile Only) */}
       {isMobile && isCollapsed && (
         <button
@@ -67,11 +105,17 @@ export default function Sidebar({ labs }: { labs: Lab[] }) {
       {/* Sidebar */}
       <div
         className={`fixed md:relative top-0 left-0 h-screen transition-all duration-300 z-20 border-r border-[var(--border)] bg-[var(--surface)] shadow-md md:shadow-none
-        ${isCollapsed ? "-translate-x-full md:translate-x-0 md:w-16" : "translate-x-0 w-64"}`}
+        ${
+          isCollapsed
+            ? "-translate-x-full md:translate-x-0 md:w-16"
+            : "translate-x-0 w-64"
+        }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-          {!isCollapsed && <h2 className="text-sm font-semibold truncate">Spaces</h2>}
+          {!isCollapsed && (
+            <h2 className="text-sm font-semibold truncate">Spaces</h2>
+          )}
 
           {/* Close Button (mobile only) */}
           {isMobile && !isCollapsed && (
@@ -92,7 +136,7 @@ export default function Sidebar({ labs }: { labs: Lab[] }) {
                 <span className="font-medium text-sm">Computer-Lab</span>
                 <button
                   className="p-1 rounded hover:bg-[var(--surface-muted)]"
-                  onClick={() => setShowInput(true)}
+                  onClick={() => setShowLabForm(true)}
                 >
                   <FiPlus />
                 </button>
@@ -101,50 +145,74 @@ export default function Sidebar({ labs }: { labs: Lab[] }) {
             {isCollapsed && <FiMonitor size={20} className="mx-auto" />}
           </div>
 
-          {/* Input for New Lab */}
-          {showInput && !isCollapsed && (
-            <div className="mt-2 space-y-2">
-              <input
-                type="text"
-                value={labName}
-                onChange={(e) => setLabName(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded border border-[var(--border)] bg-[var(--surface-muted)]"
-                placeholder="Enter lab name"
-              />
-              <div className="flex gap-2">
-                <button
-                  className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
-                  onClick={handleSave}
-                >
-                  <FiSave /> Save
-                </button>
-                <button
-                  className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
-                  onClick={() => {
-                    setShowInput(false);
-                    setLabName("");
-                  }}
-                >
-                  <FiX /> Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Lab List */}
           {labs.length > 0 &&
             labs.map((lab, i) => (
-              <div
-                key={i}
-                onClick={() => router.push(`/computer-lab/${lab.name}`)}
-                className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition"
-              >
-                {!isCollapsed ? (
-                  <span className="truncate text-sm">{lab.name}</span>
+              <div key={i} className="space-y-2">
+                {/* Edit Input (when in edit mode) */}
+                {editingLabId === lab.id && !isCollapsed ? (
+                  <div className="px-3 py-2 space-y-2">
+                    <input
+                      type="text"
+                      value={editLabName}
+                      onChange={(e) => setEditLabName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSaveEdit();
+                        } else if (e.key === "Escape") {
+                          handleCancelEdit();
+                        }
+                      }}
+                      className="w-full px-3 py-2 text-sm rounded border border-[var(--border)] bg-[var(--surface-muted)]"
+                      placeholder="Enter lab name"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleSaveEdit}
+                        disabled={isEditLoading}
+                      >
+                        {isEditLoading ? (
+                          <>Updating...</>
+                        ) : (
+                          <>
+                            <FiSave /> Save
+                          </>
+                        )}
+                      </button>
+                      <button
+                        className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
+                        onClick={handleCancelEdit}
+                      >
+                        <FiX /> Cancel
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  <span className="mx-auto text-sm font-medium">
-                    {lab.name.charAt(0).toUpperCase()}
-                  </span>
+                  /* Normal Lab Display */
+                  <div
+                    onClick={() => router.push(`/computer-lab/${lab.name}`)}
+                    className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition"
+                  >
+                    {!isCollapsed ? (
+                      <>
+                        <span className="truncate text-sm flex-1">
+                          {lab.name}
+                        </span>
+                        <button
+                          onClick={(e) => handleEditName(lab.id, lab.name, e)}
+                          className="p-1 rounded hover:bg-[var(--surface-muted)] transition"
+                        >
+                          <FiEdit2 />
+                        </button>
+                      </>
+                    ) : (
+                      <span className="mx-auto text-sm font-medium">
+                        {lab.name}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
@@ -157,6 +225,32 @@ export default function Sidebar({ labs }: { labs: Lab[] }) {
           className="fixed inset-0 bg-black/40 z-10"
           onClick={() => setIsCollapsed(true)}
         />
+      )}
+
+      {/* Lab Creation Form Modal */}
+      {showLabForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-[var(--surface)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b border-[var(--border)]">
+              <h2 className="text-xl font-semibold">Create New Lab</h2>
+              <button
+                onClick={() => setShowLabForm(false)}
+                className="p-2 rounded-lg hover:bg-[var(--surface-muted)] transition cursor-pointer"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              <LabCreationForm
+                onSuccess={() => {
+                  setShowLabForm(false);
+                  onNewLab();
+                  toast.success("Lab created successfully!");
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

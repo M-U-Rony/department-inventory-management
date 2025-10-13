@@ -11,7 +11,7 @@ export async function POST(req: Request) {
         const item = searchParams.get("item");
 
         const body = await req.json();
-        const { name, processor, ram, hdd, ssd, gpu, status, note } = body;
+        const { name, brand,processor, ram, hdd, ssd, gpu, status, note } = body;
 
 
 
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
             const newCpu = await prisma.cpu.create({
             data: {
                 name,
+                brand,
                 processor,
                 ram,
                 hdd,
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
             const newMonitor = await prisma.monitor.create({
             data: {
                 name,
+                brand,
                 status,
                 Note: note,
             },
@@ -57,6 +59,7 @@ export async function POST(req: Request) {
             const newPrinter = await prisma.printer.create({
             data: {
                 name,
+                brand,
                 status,
                 Note: note,
             },

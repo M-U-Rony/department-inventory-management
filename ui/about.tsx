@@ -2,18 +2,7 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useParams } from "next/navigation";
-
-interface Item {
-  id: string;
-  name: string;
-  processor?: string;
-  ram?: string;
-  hdd?: string;
-  ssd?: string;
-  gpu?: string;
-  status: string;
-  note?: string;
-}
+import { Item, ItemKey, ItemValue } from "../types/item";
 
 export default function About({
   data,
@@ -26,13 +15,36 @@ export default function About({
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(data);
 
+  // Helper functions for type-safe data access
+  const getItemValue = (item: Item, key: string): ItemValue => {
+    return item[key as ItemKey];
+  };
+
+  const getEditedValue = (key: string): string => {
+    return (editedData[key as ItemKey] as string) || "";
+  };
+
+  const getDisplayValue = (key: string): string => {
+    const value = getItemValue(data, key);
+
+    if (key === "createdAt" || key === "updatedAt") {
+      return new Date(value as string).toLocaleDateString();
+    }
+
+    if (key === "location") {
+      return (value as string) || "Not assigned";
+    }
+
+    return String(value || "");
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setEditedData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name as ItemKey]: value,
     }));
   };
 
@@ -68,26 +80,29 @@ export default function About({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Object.keys(data).map((key) => {
-            if (key === "id") return null;
+            if (key === "id" || key === "desk") return null;
 
-            const isEditableField = key !== "createdAt" && key !== "updatedAt";
+            const isEditableField =
+              key !== "createdAt" && key !== "updatedAt" && key !== "location";
 
             return (
               <div className="flex flex-col" key={key}>
-                <label className="muted-text text-sm">{key}</label>
+                <label className="muted-text text-sm">
+                  {key === "note"
+                    ? "Note"
+                    : key.charAt(0).toUpperCase() + key.slice(1)}
+                </label>
                 {isEditing && isEditableField ? (
                   <input
                     type="text"
                     name={key}
-                    value={(editedData as any)[key] || ""}
+                    value={getEditedValue(key)}
                     onChange={handleInputChange}
                     className="rounded-md p-3 bg-white border border-gray-300 text-black"
                   />
                 ) : (
                   <div className="rounded-md p-3 bg-white text-black border border-gray-300">
-                    {key === "createdAt" || key === "updatedAt"
-                      ? new Date((data as any)[key]).toLocaleDateString()
-                      : (data as any)[key]}
+                    {getDisplayValue(key)}
                   </div>
                 )}
               </div>

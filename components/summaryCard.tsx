@@ -26,6 +26,8 @@ interface CardProps {
 
 export default function SummaryCard({ title, items}: CardProps) {
 
+  // console.log(items);
+
   const router = useRouter();
 
   let Icon = RiComputerLine;
@@ -46,7 +48,8 @@ export default function SummaryCard({ title, items}: CardProps) {
 
 
   const total = items.length;
-  const issues = items.filter((item) => item.status === "issue").length;
+  const issues = items.filter((item) => item.status != "working").length;
+  // const inStore = items.filter((item) => item.desk != null).length;
 
   function allitems() {
     router.push(`/items/${title.toLowerCase()}`);
@@ -80,6 +83,10 @@ export default function SummaryCard({ title, items}: CardProps) {
         <div className="muted-surface p-2 rounded-lg text-center">
           <p className="muted-text text-xs">Total</p>
           <p className="font-medium">{total}</p>
+        </div>
+        <div className="muted-surface p-2 rounded-lg text-center">
+          <p className="muted-text text-xs">Active</p>
+          <p className="font-medium">{total-issues}</p>
         </div>
         <div className="muted-surface p-2 rounded-lg text-center">
           <p className="muted-text text-xs">In Store</p>

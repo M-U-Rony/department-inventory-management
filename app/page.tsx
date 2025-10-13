@@ -12,6 +12,11 @@ export default function Home() {
   const [ups, setUps] = useState([]);
   const [labs, setLabs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [labFetch, setLabFetch] = useState(false);
+
+  function onNewLab() {
+    setLabFetch((prev) => !prev);
+  }
 
   useEffect(() => {
     async function fetchallItems() {
@@ -46,7 +51,15 @@ export default function Home() {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+    }
 
+    fetchallItems();
+  }, []);
+
+
+  useEffect(() => {
+
+    async function fetchLabs() {
       try {
         const response = await fetch("/api/getAllrooms");
         const data = await response.json();
@@ -58,8 +71,9 @@ export default function Home() {
       }
     }
 
-    fetchallItems();
-  }, []);
+    fetchLabs();
+    
+  }, [labFetch]);
 
   if (loading) {
     return (
@@ -72,7 +86,7 @@ export default function Home() {
   return (
     <main className="flex min-w-screen gap-6">
       {/*sidebar*/}
-      <Sidebar labs={labs} />
+      <Sidebar labs={labs} onNewLab={onNewLab}/>
 
       <div className="flex flex-wrap gap-6 items-start mt-16 justify-center">
         <SummaryCard title="CPU" items={cpus} />
