@@ -7,6 +7,9 @@ import toast, { Toaster } from "react-hot-toast";
 interface AddItemsFormProps {
   onClose?: () => void;
   title: string;
+  mode?: "add" | "edit";
+  itemId?: string;
+  initial?: Partial<FormState>;
 }
 
 interface FormState {
@@ -21,17 +24,17 @@ interface FormState {
   note: string;
 }
 
-export default function AddItemsForm({ onClose, title }: AddItemsFormProps) {
+export default function AddItemsForm({ onClose, title, mode = "add", itemId, initial }: AddItemsFormProps) {
   const [form, setForm] = useState<FormState>({
-    name: "",
-    brand: "",
-    processor: undefined,
-    ram: undefined,
-    hdd: undefined,
-    ssd: undefined,
-    gpu: undefined,
-    status: "working",
-    note: "",
+    name: initial?.name ?? "",
+    brand: initial?.brand ?? "",
+    processor: initial?.processor,
+    ram: initial?.ram,
+    hdd: initial?.hdd,
+    ssd: initial?.ssd,
+    gpu: initial?.gpu,
+    status: initial?.status ?? "working",
+    note: initial?.note ?? "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -44,8 +47,14 @@ export default function AddItemsForm({ onClose, title }: AddItemsFormProps) {
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/additem?item=${title}`, {
-        method: "POST",
+      const isEdit = mode === "edit" && itemId;
+      const url = isEdit
+        ? `/api/updateitem?item=${title}&id=${itemId}`
+        : `/api/additem?item=${title}`;
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         body: JSON.stringify(form),
         headers: {
           "Content-Type": "application/json",
@@ -53,10 +62,10 @@ export default function AddItemsForm({ onClose, title }: AddItemsFormProps) {
       });
 
       if (!res.ok) {
-        toast.error("Failed to add item");
+        toast.error(isEdit ? "Failed to update item" : "Failed to add item");
       }
 
-      toast.success("Item added successfully!");
+      toast.success(isEdit ? "Item updated successfully!" : "Item added successfully!");
 
       window.location.reload();
 
@@ -220,10 +229,10 @@ export default function AddItemsForm({ onClose, title }: AddItemsFormProps) {
                 onChange={(e) => update("status", e.target.value)}
                 className="w-full rounded-lg border border-[var(--border)] bg-[color:var(--surface-muted)]/60 focus:bg-[color:var(--surface)] px-3 py-2.5 text-[color:var(--text)] outline-none focus:ring-2 focus:ring-[color:var(--accent)] text-sm"
               >
-                <option value="working">working</option>
-                <option value="maintenance">Not Working</option>
-                <option value="maintenance">Maintenence</option>
-                <option value="maintenance">Others</option>
+                <option value="working">Working</option>
+                <option value="not working">Not Working</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="others">Others</option>
               </select>
             </div>
           </div>
@@ -253,7 +262,7 @@ export default function AddItemsForm({ onClose, title }: AddItemsFormProps) {
                   <span>Saving...</span>
                 </>
               ) : (
-                "save"
+                "Save"
               )}
             </button>
           </div>

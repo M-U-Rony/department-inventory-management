@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const item = searchParams.get("item");

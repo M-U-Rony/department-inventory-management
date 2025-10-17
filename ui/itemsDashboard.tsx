@@ -43,7 +43,7 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
         {
           method: "DELETE",
           headers: {
-            contentType: "application/json",
+            "Content-Type": "application/json",
           },
         }
       );

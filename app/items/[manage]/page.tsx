@@ -28,8 +28,9 @@ export default function ManageItems() {
       try {
         const res = await fetch(`/api/getItems?item=${params.manage}`, {
           method: "GET",
+          cache: "no-store",
           headers: {
-            contentType: "application/json",
+            "Content-Type": "application/json",
           },
         });
 

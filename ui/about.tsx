@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useParams } from "next/navigation";
 import { Item, ItemKey, ItemValue } from "../types/item";
+import LoadingSpinner from "../components/loadingSpinner";
+import AddItemsForm from "./addItemsForm";
 
 export default function About({
   data,
@@ -14,6 +16,7 @@ export default function About({
   const params = useParams<{ manage: string }>();
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(data);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Helper functions for type-safe data access
   const getItemValue = (item: Item, key: string): ItemValue => {
@@ -49,6 +52,7 @@ export default function About({
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       await fetch(`/api/updateitem?item=${params.manage}&id=${data.id}`, {
         method: "PUT",
@@ -62,12 +66,14 @@ export default function About({
       window.location.reload();
     } catch (error) {
       console.error("Failed to update item:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="fixed top-0 left-0 flex justify-center items-center min-h-screen w-full px-4 z-40 bg-black/20">
-      <div className="w-full max-w-3xl card-surface shadow-lg rounded-xl p-6 bg-white">
+      <div className="w-full max-w-3xl card-surface shadow-lg rounded-xl p-6 bg-white max-h-[85vh] overflow-y-auto">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold mb-6 text-center">Details</h2>
           <button
@@ -78,55 +84,58 @@ export default function About({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {Object.keys(data).map((key) => {
-            if (key === "id" || key === "desk") return null;
+        {isEditing ? (
+          <AddItemsForm
+            onClose={onClose}
+            title={String(params.manage)}
+            mode="edit"
+            itemId={data.id}
+            initial={{
+              name: data.name,
+              brand: data.brand || "",
+              processor: data.processor,
+              ram: data.ram,
+              hdd: data.hdd,
+              ssd: data.ssd,
+              gpu: data.gpu,
+              status: data.status,
+              note: data.note || "",
+            }}
+          />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Object.keys(data).map((key) => {
+                if (key === "id" || key === "desk") return null;
 
-            const isEditableField =
-              key !== "createdAt" && key !== "updatedAt" && key !== "location";
+                const isEditableField =
+                  key !== "createdAt" && key !== "updatedAt" && key !== "location";
 
-            return (
-              <div className="flex flex-col" key={key}>
-                <label className="muted-text text-sm">
-                  {key === "note"
-                    ? "Note"
-                    : key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                {isEditing && isEditableField ? (
-                  <input
-                    type="text"
-                    name={key}
-                    value={getEditedValue(key)}
-                    onChange={handleInputChange}
-                    className="rounded-md p-3 bg-white border border-gray-300 text-black"
-                  />
-                ) : (
-                  <div className="rounded-md p-3 bg-white text-black border border-gray-300">
-                    {getDisplayValue(key)}
+                return (
+                  <div className="flex flex-col" key={key}>
+                    <label className="muted-text text-sm">
+                      {key === "note"
+                        ? "Note"
+                        : key.charAt(0).toUpperCase() + key.slice(1)}
+                    </label>
+                    <div className="rounded-md p-3 bg-[color:var(--surface)] text-[color:var(--text)] border border-[color:var(--border)]">
+                      {getDisplayValue(key)}
+                    </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
 
-        <div className="flex justify-end mt-6">
-          {isEditing ? (
-            <button
-              onClick={handleSave}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-[color:var(--border)] px-3 py-2 text-sm font-medium hover:bg-[color:var(--surface-muted)] cursor-pointer"
-            >
-              Save
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-[color:var(--border)] px-3 py-2 text-sm font-medium hover:bg-[color:var(--surface-muted)] cursor-pointer"
-            >
-              Edit
-            </button>
-          )}
-        </div>
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-[color:var(--border)] px-3 py-2 text-sm font-medium hover:bg-[color:var(--surface-muted)] cursor-pointer"
+              >
+                Edit
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
