@@ -4,6 +4,7 @@ import { HiComputerDesktop } from "react-icons/hi2";
 import DeskInfo from "./deskInfo";
 import BackButton from "../components/backButton";
 import { Desk } from "../types/desk";
+import { IoMdClose } from "react-icons/io";
 
 interface Lab1LayoutProps {
   desks: Desk[];
@@ -48,7 +49,10 @@ export default function Lab1Layout({
                       >
                         <div
                           onClick={() => handleDeskClick(desk)}
-                          className={`min-h-[3.5rem] min-w-[3.5rem] h-16 w-16 rounded-md border border-gray-600 flex items-center justify-center hover:opacity-80 cursor-pointer transition-all duration-200 active:scale-95`}
+                          className={`min-h-[3.5rem] min-w-[3.5rem] h-16 w-16 rounded-md border flex items-center justify-center hover:opacity-80 cursor-pointer transition-all duration-200 active:scale-95 ${(desk.cpu?.status !== 'working' ||
+                            desk.monitor?.status !== 'working' || desk.cpuId == null || desk.monitorId == null
+                          )
+                            ? 'text-red-400 border-red-400' : 'text-green-500 border-green-500'}`}
                         >
                           <HiComputerDesktop className="w-6 h-6" />
                         </div>
@@ -67,14 +71,16 @@ export default function Lab1Layout({
       {/* Desk Info Modal */}
       {selectedDesk && (
         <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 z-50">
-          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-md border border-gray-700 relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-200 text-lg sm:text-xl"
-            >
-              ✖
-            </button>
-            <h2 className="text-xl sm:text-2xl mb-3 text-center font-semibold text-white pr-6">
+          <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm">
+            <div className="flex justify-end">
+              <button
+                onClick={handleCloseModal}
+                className="cursor-pointer"
+              >
+                <IoMdClose size={24} />
+              </button>
+            </div>
+            <h2 className="text-xl sm:text-2xl mb-6 text-center font-normal text-[var(--text-muted)]">
               {selectedDesk.deskNo} Information
             </h2>
             <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} />

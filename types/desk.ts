@@ -5,6 +5,7 @@ export interface Desk {
   cpu: {
     id: number;
     name: string;
+    brand: string;
     processor: string;
     ram: string;
     ssd: string;
@@ -19,6 +20,7 @@ export interface Desk {
   monitor: {
     id: number;
     name: string;
+    brand: string;
     status: string;
     Note: string | null;
     createdAt: string;
