@@ -97,30 +97,31 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
     <div className="text-primary">
       {/* Modal for Unassigned Items */}
       {showModal && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="card-surface p-6 rounded-md w-3xl h-96 max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg text-center font-semibold text-primary">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="card-surface w-full max-w-lg md:max-w-xl rounded-xl shadow-lg border border-base-300 p-5 md:p-6">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h3 className="text-base md:text-lg font-semibold text-primary">
                 Available items
               </h3>
               <button
+                aria-label="Close"
                 onClick={() => setShowModal(false)}
-                className="text-secondary hover:text-primary"
+                className="text-secondary hover:text-primary transition-colors"
               >
-                x
+                <IoMdClose size={20} />
               </button>
             </div>
-            <div className="max-h-60 overflow-y-auto">
+            <div className="mt-3 md:mt-4 max-h-[60vh] overflow-y-auto">
               {unassignedItems.length > 0 ? (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
                   {unassignedItems.map((item) => (
-                    <div
+                    <button
                       key={item.id}
-                      className="bg-base-200 p-3 rounded cursor-pointer hover:bg-base-300"
                       onClick={() => handleItemAssignment(item.id)}
+                      className="text-left w-full px-3 py-2 rounded-md hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
                     >
                       {item.name}
-                    </div>
+                    </button>
                   ))}
                 </div>
               ) : (
@@ -141,7 +142,7 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
             <p className=" mb-4">This desk doesn't contain any monitor</p>
             <button
               onClick={() => handleAssign("monitor")}
-              className="px-6 py-2 cursor-pointer bg-[var(--btn-bg)] text-[var(--btn-text)] rounded-md"
+              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading && currentItemType === "monitor" ? (
@@ -153,17 +154,24 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
           </div>
         ) : (
           <div className="flex flex-col mt-1 gap-y-2">
-            <span className="px-2 py-0.5">Name: {desk.monitor?.name}</span>
-            <span className="px-2 py-0.5">Name: {desk.monitor?.brand}</span>
-            <span className="px-2 py-0.5">
-              Condition: {desk.monitor?.status}
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Name: {desk.monitor?.name}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Brand: {desk.monitor?.brand}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">
+              Condition:
+              <span
+                className={`ml-2 inline-block rounded px-2 py-0.5 text-xs font-semibold text-white ${desk.monitor?.status === "working"
+                  ? "bg-green-500"
+                  : "bg-red-500"}`}
+              >
+                {desk.monitor?.status}
+              </span>
             </span>
             <button
               onClick={() =>
                 desk.monitorId &&
                 handleItemWithdraw(desk.monitorId, "monitor")
               }
-              className="px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md  text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 dark:border-neutral-200"
               disabled={withdrawLoading === "monitor"}
             >
               {withdrawLoading === "monitor" ? (
@@ -178,13 +186,13 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
 
       {/* CPU */}
       <div>
-        <h3 className="text-xl text-center mb-4">CPU</h3>
+        <h3 className="text-2xl text-center font-mono mb-4">CPU</h3>
         {desk?.cpuId == null ? (
           <div className="text-center">
             <p className="text-secondary mb-4">This desk doesn't contain any CPU</p>
             <button
               onClick={() => handleAssign("cpu")}
-              className="px-6 py-2 cursor-pointer bg-primary text-primary-content rounded-md transition-colors"
+              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading && currentItemType === "cpu" ? (
@@ -196,25 +204,32 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
           </div>
         ) : (
           <div className="flex flex-col mt-1 gap-y-2">
-            <span className="px-2 py-0.5">Name: {desk.cpu?.name}</span>
-            <span className="px-2 py-0.5">Brand: {desk.cpu?.brand}</span>
-            <span className="px-2 py-0.5">
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Name: {desk.cpu?.name}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Brand: {desk.cpu?.brand}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">
               Processor: {desk.cpu?.processor}
             </span>
-            <span className="px-2 py-0.5">Ram: {desk.cpu?.ram}</span>
-            <span className="px-2 py-0.5">SSD: {desk.cpu?.ssd}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Ram: {desk.cpu?.ram}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">SSD: {desk.cpu?.ssd}</span>
             {desk.cpu?.hdd ? (
-              <span className="px-2 py-0.5">HDD: {desk.cpu.hdd}</span>
+              <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">HDD: {desk.cpu.hdd}</span>
             ) : null}
-            <span className="px-2 py-0.5">GPU: {desk.cpu?.gpu}</span>
-            <span className="px-2 py-0.5">
-              Condition: {desk.cpu?.status}
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">GPU: {desk.cpu?.gpu}</span>
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">
+              Condition:
+              <span
+                className={`ml-2 inline-block rounded px-2 py-0.5 text-xs font-semibold text-white ${desk.cpu?.status === "working"
+                  ? "bg-green-500"
+                  : "bg-red-500"}`}
+              >
+                {desk.cpu?.status}
+              </span>
             </span>
             <button
               onClick={() =>
                 desk.cpuId && handleItemWithdraw(desk.cpuId, "cpu")
               }
-              className="px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 cursor-pointer"
               disabled={withdrawLoading === "cpu"}
             >
               {withdrawLoading === "cpu" ? <LoadingSpinner /> : "Withdraw"}

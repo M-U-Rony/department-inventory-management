@@ -19,6 +19,25 @@ export default function Home() {
   }
 
   useEffect(() => {
+
+    async function fetchLabs() {
+      try {
+        const response = await fetch("/api/getAllrooms");
+        const data = await response.json();
+        setLabs(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchLabs();
+    
+  }, [labFetch]);
+
+  
+  useEffect(() => {
     async function fetchallItems() {
       try {
         const response = await fetch("/api/getItems?item=cpu");
@@ -57,23 +76,6 @@ export default function Home() {
   }, []);
 
 
-  useEffect(() => {
-
-    async function fetchLabs() {
-      try {
-        const response = await fetch("/api/getAllrooms");
-        const data = await response.json();
-        setLabs(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchLabs();
-    
-  }, [labFetch]);
 
   if (loading) {
     return (
