@@ -4,6 +4,7 @@ import { HiComputerDesktop } from "react-icons/hi2";
 import DeskInfo from "./deskInfo";
 import BackButton from "../components/backButton";
 import { Desk } from "../types/desk";
+import { IoMdClose } from "react-icons/io";
 
 interface Lab2LayoutProps {
   desks: Desk[];
@@ -11,6 +12,7 @@ interface Lab2LayoutProps {
   handleDeskClick: (desk: Desk) => void;
   handleCloseModal: () => void;
   params: { labno: string };
+  onChanged?: () => void;
 }
 
 export default function Lab2Layout({
@@ -19,6 +21,7 @@ export default function Lab2Layout({
   handleDeskClick,
   handleCloseModal,
   params,
+  onChanged,
 }: Lab2LayoutProps) {
   return (
     <div className="p-4 sm:p-6 mx-auto min-h-screen min-w-screen">
@@ -137,21 +140,23 @@ export default function Lab2Layout({
 
       {/* Desk Info Modal */}
       {selectedDesk && (
-        <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 z-50">
-          <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-2 right-2 muted-text hover:text-gray-200 text-lg sm:text-xl"
-            >
-              ✖
-            </button>
-            <h2 className="text-xl sm:text-2xl mb-3 text-center font-semibold pr-6">
-              {selectedDesk.deskNo} Information
-            </h2>
-            <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} />
-          </div>
-        </div>
-      )}
+              <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 z-50">
+                <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm">
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleCloseModal}
+                      className="cursor-pointer"
+                    >
+                      <IoMdClose size={24} />
+                    </button>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl mb-6 text-center font-normal text-[var(--text-muted)]">
+                    {selectedDesk.deskNo} Information
+                  </h2>
+                  <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} />
+                </div>
+              </div>
+            )}
     </div>
   );
 }

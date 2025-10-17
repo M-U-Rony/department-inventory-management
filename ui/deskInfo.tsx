@@ -8,6 +8,7 @@ import LoadingSpinner from "../components/loadingSpinner";
 interface DeskInfoProps {
   desk?: Desk;
   handleCloseModal: () => void;
+  onChanged?: () => void;
 }
 
 interface Item {
@@ -15,12 +16,16 @@ interface Item {
   name: string;
 }
 
-export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
+export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfoProps) {
   const [unassignedItems, setUnassignedItems] = useState<Item[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentItemType, setCurrentItemType] = useState("");
   const [loading, setLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState("");
+  const [assigningId, setAssigningId] = useState<number | null>(null);
+  const [optimisticWithdraw, setOptimisticWithdraw] = useState<"monitor" | "cpu" | "">("");
+  const [withdrawErrorItem, setWithdrawErrorItem] = useState<"" | "monitor" | "cpu">("");
+  const [withdrawErrorMessage, setWithdrawErrorMessage] = useState<string>("");
 
   // console.log("Desk info:", desk);
 
@@ -47,7 +52,10 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
 
   const handleItemWithdraw = async (itemId: number, item: string) => {
     try {
+      setWithdrawErrorItem("");
+      setWithdrawErrorMessage("");
       setWithdrawLoading(item);
+      if (item === "monitor" || item === "cpu") setOptimisticWithdraw(item as "monitor" | "cpu");
       const response = await fetch(
         `/api/withdrawItem?item=${item}&id=${itemId}&deskId=${desk?.id}`,
         {
@@ -63,15 +71,24 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
       }
       console.log(`Withdraw ${itemId} to desk ${desk?.id}`);
       handleCloseModal();
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
+      onChanged?.();
     } catch (error) {
       console.error("Error withdrawing item:", error);
+      setOptimisticWithdraw("");
+      setWithdrawErrorItem((item === "monitor" || item === "cpu") ? (item as "monitor" | "cpu") : "");
+      setWithdrawErrorMessage("Failed to withdraw item. Please try again.");
     } finally {
       setWithdrawLoading("");
+      setOptimisticWithdraw("");
     }
   };
 
   const handleItemAssignment = async (itemId: number) => {
     try {
+      setAssigningId(itemId);
       const response = await fetch(
         `/api/assignItem?item=${currentItemType}&id=${itemId}&deskId=${desk?.id}`,
         {
@@ -88,8 +105,14 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
       console.log(`Assigning ${itemId} to desk ${desk?.id}`);
       setShowModal(false);
       handleCloseModal();
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
+      onChanged?.();
     } catch (error) {
       console.error("Error assigning item:", error);
+    } finally {
+      setAssigningId(null);
     }
   };
 
@@ -99,18 +122,21 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="card-surface w-full max-w-lg md:max-w-xl rounded-xl shadow-lg border border-base-300 p-5 md:p-6">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h3 className="text-base md:text-lg font-semibold text-primary">
+            <div className="relative flex items-center justify-between mb-3 md:mb-4">
+              <h3 className="absolute left-1/2 -translate-x-1/2 text-base md:text-lg font-semibold text-primary text-center p-4 my-2 md:my-3">
                 Available items
               </h3>
               <button
                 aria-label="Close"
                 onClick={() => setShowModal(false)}
-                className="text-secondary hover:text-primary transition-colors"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-secondary hover:text-primary transition-colors cursor-pointer"
               >
                 <IoMdClose size={20} />
               </button>
-            </div>
+              {withdrawErrorItem === "monitor" && withdrawErrorMessage ? (
+              <p className="mt-2 text-sm text-red-500">{withdrawErrorMessage}</p>
+            ) : null}
+          </div>
             <div className="mt-3 md:mt-4 max-h-[60vh] overflow-y-auto">
               {unassignedItems.length > 0 ? (
                 <div className="flex flex-col">
@@ -118,9 +144,15 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
                     <button
                       key={item.id}
                       onClick={() => handleItemAssignment(item.id)}
-                      className="text-left w-full px-3 py-2 rounded-md hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+                      disabled={assigningId !== null}
+                      aria-busy={assigningId === item.id}
+                      className="text-left w-full px-3 py-2 rounded-md hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 muted-surface"
                     >
-                      {item.name}
+                      {assigningId === item.id ? (
+                        <div className="flex items-center justify-center"><LoadingSpinner /></div>
+                      ) : (
+                        item.name
+                      )}
                     </button>
                   ))}
                 </div>
@@ -137,13 +169,13 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
       {/* Monitor */}
       <div className="mb-8">
         <h3 className="text-2xl text-center font-mono mb-4">Monitor</h3>
-        {desk?.monitorId == null ? (
+        {desk?.monitorId == null || optimisticWithdraw === "monitor" ? (
           <div className="text-center">
             <p className=" mb-4">This desk doesn't contain any monitor</p>
             <button
               onClick={() => handleAssign("monitor")}
-              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={loading}
+              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              disabled={loading || Boolean(withdrawLoading)}
             >
               {loading && currentItemType === "monitor" ? (
                 <LoadingSpinner />
@@ -187,13 +219,13 @@ export default function DeskInfo({ desk, handleCloseModal }: DeskInfoProps) {
       {/* CPU */}
       <div>
         <h3 className="text-2xl text-center font-mono mb-4">CPU</h3>
-        {desk?.cpuId == null ? (
+        {desk?.cpuId == null || optimisticWithdraw === "cpu" ? (
           <div className="text-center">
             <p className="text-secondary mb-4">This desk doesn't contain any CPU</p>
             <button
               onClick={() => handleAssign("cpu")}
-              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={loading}
+              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              disabled={loading || Boolean(withdrawLoading)}
             >
               {loading && currentItemType === "cpu" ? (
                 <LoadingSpinner />
