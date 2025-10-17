@@ -144,7 +144,7 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
                     <button
                       key={item.id}
                       onClick={() => handleItemAssignment(item.id)}
-                      disabled={assigningId !== null}
+                      disabled={assigningId !== null || Boolean(withdrawLoading)}
                       aria-busy={assigningId === item.id}
                       className="text-left w-full px-3 py-2 rounded-md hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 muted-surface"
                     >
@@ -172,17 +172,24 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
         {desk?.monitorId == null || optimisticWithdraw === "monitor" ? (
           <div className="text-center">
             <p className=" mb-4">This desk doesn't contain any monitor</p>
-            <button
-              onClick={() => handleAssign("monitor")}
-              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              disabled={loading || Boolean(withdrawLoading)}
-            >
-              {loading && currentItemType === "monitor" ? (
+            {withdrawLoading === "monitor" ? (
+              <div className="flex flex-col items-center gap-2 py-2">
                 <LoadingSpinner />
-              ) : (
-                "Assign"
-              )}
-            </button>
+                <span className="text-sm text-secondary">Withdrawing monitor...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleAssign("monitor")}
+                className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                disabled={loading || Boolean(withdrawLoading)}
+              >
+                {loading && currentItemType === "monitor" ? (
+                  <LoadingSpinner />
+                ) : (
+                  "Assign"
+                )}
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col mt-1 gap-y-2">
@@ -204,7 +211,7 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
                 handleItemWithdraw(desk.monitorId, "monitor")
               }
               className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md  text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 dark:border-neutral-200"
-              disabled={withdrawLoading === "monitor"}
+              disabled={Boolean(withdrawLoading) || assigningId !== null || loading}
             >
               {withdrawLoading === "monitor" ? (
                 <LoadingSpinner />
@@ -222,17 +229,24 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
         {desk?.cpuId == null || optimisticWithdraw === "cpu" ? (
           <div className="text-center">
             <p className="text-secondary mb-4">This desk doesn't contain any CPU</p>
-            <button
-              onClick={() => handleAssign("cpu")}
-              className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              disabled={loading || Boolean(withdrawLoading)}
-            >
-              {loading && currentItemType === "cpu" ? (
+            {withdrawLoading === "cpu" ? (
+              <div className="flex flex-col items-center gap-2 py-2">
                 <LoadingSpinner />
-              ) : (
-                "Assign"
-              )}
-            </button>
+                <span className="text-sm text-secondary">Withdrawing CPU...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleAssign("cpu")}
+                className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                disabled={loading || Boolean(withdrawLoading)}
+              >
+                {loading && currentItemType === "cpu" ? (
+                  <LoadingSpinner />
+                ) : (
+                  "Assign"
+                )}
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col mt-1 gap-y-2">
@@ -262,7 +276,7 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
                 desk.cpuId && handleItemWithdraw(desk.cpuId, "cpu")
               }
               className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 cursor-pointer"
-              disabled={withdrawLoading === "cpu"}
+              disabled={Boolean(withdrawLoading) || assigningId !== null || loading}
             >
               {withdrawLoading === "cpu" ? <LoadingSpinner /> : "Withdraw"}
             </button>
