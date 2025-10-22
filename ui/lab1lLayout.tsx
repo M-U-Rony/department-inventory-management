@@ -12,6 +12,7 @@ interface Lab1LayoutProps {
   handleDeskClick: (desk: Desk) => void;
   handleCloseModal: () => void;
   params: { labno: string };
+  onAssignOrWithdraw: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Lab1Layout({
@@ -20,6 +21,7 @@ export default function Lab1Layout({
   handleDeskClick,
   handleCloseModal,
   params,
+  onAssignOrWithdraw,
 }: Lab1LayoutProps) {
   return (
     <div className="p-4 sm:p-6 mx-auto min-h-screen min-w-screen">
@@ -83,7 +85,7 @@ export default function Lab1Layout({
             <h2 className="text-xl sm:text-2xl mb-6 text-center font-normal text-[var(--text-muted)]">
               {selectedDesk.deskNo} Information
             </h2>
-            <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} />
+            <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} onAssignOrWithdraw={onAssignOrWithdraw} />
           </div>
         </div>
       )}

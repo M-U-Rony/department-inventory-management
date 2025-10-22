@@ -8,7 +8,7 @@ import LoadingSpinner from "../components/loadingSpinner";
 interface DeskInfoProps {
   desk?: Desk;
   handleCloseModal: () => void;
-  onChanged?: () => void;
+  onAssignOrWithdraw: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Item {
@@ -16,7 +16,7 @@ interface Item {
   name: string;
 }
 
-export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfoProps) {
+export default function DeskInfo({ desk, handleCloseModal, onAssignOrWithdraw }: DeskInfoProps) {
   const [unassignedItems, setUnassignedItems] = useState<Item[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentItemType, setCurrentItemType] = useState("");
@@ -78,11 +78,8 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
         throw new Error("Failed to withdraw item");
       }
       console.log(`Withdraw ${itemId} to desk ${desk?.id}`);
-      handleCloseModal();
-      if (typeof window !== "undefined") {
-        window.location.reload();
-      }
-      onChanged?.();
+      onAssignOrWithdraw((prev: boolean) => !prev);
+    
     } catch (error) {
       console.error("Error withdrawing item:", error);
       setOptimisticWithdraw("");
@@ -114,13 +111,11 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
       if (!response.ok) {
         throw new Error("Failed to assign item");
       }
+      
       console.log(`Assigning ${itemId} to desk ${desk?.id}`);
       setShowModal(false);
-      handleCloseModal();
-      if (typeof window !== "undefined") {
-        window.location.reload();
-      }
-      onChanged?.();
+      onAssignOrWithdraw((prev: boolean) => !prev);
+      
     } catch (error) {
       console.error("Error assigning item:", error);
     } finally {

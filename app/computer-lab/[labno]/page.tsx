@@ -13,6 +13,7 @@ export default function ComputerLabPage() {
   const [layout, setLayout] = useState("1");
   const [selectedDesk, setSelectedDesk] = useState(null as Desk | null);
   const [loading, setLoading] = useState(true);
+  const [onAssignOrWithdraw, setOnAssignOrWithdraw] = useState(false);
 
   useEffect(() => {
     async function fetchDesks() {
@@ -23,6 +24,12 @@ export default function ComputerLabPage() {
         // console.log("Fetched data:", data);
         setDesks(data.desks || []);
         setLayout(data.layout || "1");
+        // Resync selectedDesk reference with the freshly fetched desks
+        setSelectedDesk((prev) => {
+          if (!prev) return prev;
+          const updated = (data.desks || []).find((d: Desk) => d.id === prev.id);
+          return updated ?? null;
+        });
       } catch (error) {
         console.error("Error fetching desks:", error);
       } finally {
@@ -31,7 +38,9 @@ export default function ComputerLabPage() {
     }
 
     fetchDesks();
-  }, [params.labno]);
+  }, [params.labno, onAssignOrWithdraw]);
+
+
 
   const handleDeskClick = (desk: Desk) => {
     setSelectedDesk(desk);
@@ -58,6 +67,7 @@ export default function ComputerLabPage() {
         handleDeskClick={handleDeskClick}
         handleCloseModal={handleCloseModal}
         params={params}
+        onAssignOrWithdraw={setOnAssignOrWithdraw}
       />
     );
   } else {
@@ -68,6 +78,7 @@ export default function ComputerLabPage() {
         handleDeskClick={handleDeskClick}
         handleCloseModal={handleCloseModal}
         params={params}
+        onAssignOrWithdraw={setOnAssignOrWithdraw}
       />
     );
   }

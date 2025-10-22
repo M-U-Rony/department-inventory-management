@@ -12,7 +12,7 @@ interface Lab2LayoutProps {
   handleDeskClick: (desk: Desk) => void;
   handleCloseModal: () => void;
   params: { labno: string };
-  onChanged?: () => void;
+  onAssignOrWithdraw: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Lab2Layout({
@@ -21,7 +21,7 @@ export default function Lab2Layout({
   handleDeskClick,
   handleCloseModal,
   params,
-  onChanged,
+  onAssignOrWithdraw,
 }: Lab2LayoutProps) {
   return (
     <div className="p-4 sm:p-6 mx-auto min-h-screen min-w-screen">
@@ -153,7 +153,7 @@ export default function Lab2Layout({
                   <h2 className="text-xl sm:text-2xl mb-6 text-center font-normal text-[var(--text-muted)]">
                     {selectedDesk.deskNo} Information
                   </h2>
-                  <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} />
+                  <DeskInfo desk={selectedDesk} handleCloseModal={handleCloseModal} onAssignOrWithdraw={onAssignOrWithdraw}/>
                 </div>
               </div>
             )}
