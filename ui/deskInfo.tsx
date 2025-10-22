@@ -33,13 +33,17 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
     try {
       setLoading(true);
       setCurrentItemType(item);
-      const data = await fetch(`/api/getUnassignedItems?item=${item}`, {
+      const data = await fetch(`/api/secure/getUnassignedItems?item=${item}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
 
+      if (data.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
       const items = await data.json();
       setUnassignedItems(items);
       setShowModal(true);
@@ -57,7 +61,7 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
       setWithdrawLoading(item);
       if (item === "monitor" || item === "cpu") setOptimisticWithdraw(item as "monitor" | "cpu");
       const response = await fetch(
-        `/api/withdrawItem?item=${item}&id=${itemId}&deskId=${desk?.id}`,
+        `/api/secure/withdrawItem?item=${item}&id=${itemId}&deskId=${desk?.id}`,
         {
           method: "GET",
           headers: {
@@ -66,6 +70,10 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
         }
       );
 
+      if (response.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
       if (!response.ok) {
         throw new Error("Failed to withdraw item");
       }
@@ -90,7 +98,7 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
     try {
       setAssigningId(itemId);
       const response = await fetch(
-        `/api/assignItem?item=${currentItemType}&id=${itemId}&deskId=${desk?.id}`,
+        `/api/secure/assignItem?item=${currentItemType}&id=${itemId}&deskId=${desk?.id}`,
         {
           method: "GET",
           headers: {
@@ -99,6 +107,10 @@ export default function DeskInfo({ desk, handleCloseModal, onChanged }: DeskInfo
         }
       );
 
+      if (response.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
       if (!response.ok) {
         throw new Error("Failed to assign item");
       }

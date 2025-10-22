@@ -63,7 +63,7 @@ export default function Sidebar({
     if (editLabName.trim() && editingLabId) {
       setIsEditLoading(true);
       try {
-        const res = await fetch("/api/updateRoomName", {
+        const res = await fetch("/api/secure/updateRoomName", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -71,6 +71,11 @@ export default function Sidebar({
             name: editLabName.trim(),
           }),
         });
+
+        if (res.status === 401) {
+          if (typeof window !== "undefined") window.location.href = "/signin";
+          return;
+        }
 
         if (res.ok) {
           toast.success("Lab name updated successfully");

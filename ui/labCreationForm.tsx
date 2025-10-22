@@ -50,7 +50,7 @@ export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/createRoom", {
+      const response = await fetch("/api/secure/createRoom", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,6 +61,11 @@ export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
           rows: formData.rowsPerColumn,
         }),
       });
+
+      if (response.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
 
       if (!response.ok) {
         const errorData = await response.json();

@@ -49,8 +49,8 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
     try {
       const isEdit = mode === "edit" && itemId;
       const url = isEdit
-        ? `/api/updateitem?item=${title}&id=${itemId}`
-        : `/api/additem?item=${title}`;
+        ? `/api/secure/updateitem?item=${title}&id=${itemId}`
+        : `/api/secure/additem?item=${title}`;
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -60,6 +60,11 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
           "Content-Type": "application/json",
         },
       });
+
+      if (res.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
 
       if (!res.ok) {
         toast.error(isEdit ? "Failed to update item" : "Failed to add item");

@@ -1,31 +1,28 @@
-import { NextResponse,NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-export async function middleware(req:NextRequest) {
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Only guard secure API routes
+  if (!pathname.startsWith("/api/secure")) {
+    return NextResponse.next();
+  }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
   if (!token) {
-    return NextResponse.redirect(new URL("/signin", req.url));
+    return new NextResponse(
+      JSON.stringify({ error: "Unauthorized" }),
+      {
+        status: 401,
+        headers: { "content-type": "application/json" },
+      }
+    );
   }
-  
+
   return NextResponse.next();
 }
 
-//api routes
-/* 
-/api/additem
-/api/assignItem
-api/createRoom
-api/deleteitem
-api/getUnassignedItems
-api/updateitem
-api/updateRoomName
-
-*/
-
 export const config = {
-  matcher: [
-    "/((?!api/auth|signin|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/api/secure/:path*"],
 };

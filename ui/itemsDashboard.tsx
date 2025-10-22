@@ -39,7 +39,7 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
 
     try {
       const res = await fetch(
-        `/api/deleteitem?item=${params.manage}&id=${id}`,
+        `/api/secure/deleteitem?item=${params.manage}&id=${id}`,
         {
           method: "DELETE",
           headers: {
@@ -47,6 +47,11 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
           },
         }
       );
+
+      if (res.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
 
       if (!res.ok) {
         toast.error("Failed to delete item");

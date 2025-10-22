@@ -1,4 +1,4 @@
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -36,6 +36,6 @@ export async function GET(req: Request) {
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Internal Server Error on withdrawing item";
-    return NextResponse.json({ message }, { status: 500 });
+        return NextResponse.json({ message }, { status: 500 });
     }
 }

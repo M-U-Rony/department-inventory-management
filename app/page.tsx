@@ -23,9 +23,7 @@ export default function Home() {
 
     async function fetchAllItems() {
       
-      console.log('yes');
       setLoading(true);
-      console.log('no');
 
       try {
         const [labres,cpuRes, monitorRes, printerRes, upsRes] = await Promise.all([

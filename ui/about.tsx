@@ -54,13 +54,17 @@ export default function About({
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await fetch(`/api/updateitem?item=${params.manage}&id=${data.id}`, {
+      const res = await fetch(`/api/secure/updateitem?item=${params.manage}&id=${data.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editedData),
       });
+      if (res.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
       setIsEditing(false);
       onClose();
       window.location.reload();
