@@ -5,6 +5,7 @@ import Sidebar from "../ui/sidebar";
 import SummaryCard from "../components/summaryCard";
 import { HashLoader } from "react-spinners";
 
+
 export default function Home() {
   const [cpus, setCpus] = useState([]);
   const [monitor, setMonitor] = useState([]);
@@ -17,63 +18,48 @@ export default function Home() {
   function onNewLab() {
     setLabFetch((prev) => !prev);
   }
-
-  useEffect(() => {
-
-    async function fetchLabs() {
-      try {
-        const response = await fetch("/api/getAllrooms");
-        const data = await response.json();
-        setLabs(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchLabs();
-    
-  }, [labFetch]);
-
   
   useEffect(() => {
-    async function fetchallItems() {
-      try {
-        const response = await fetch("/api/getItems?item=cpu");
-        const data = await response.json();
-        setCpus(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+
+    async function fetchAllItems() {
+      
+      console.log('yes');
+      setLoading(true);
+      console.log('no');
 
       try {
-        const response = await fetch("/api/getItems?item=monitor");
-        const data = await response.json();
-        setMonitor(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        const [labres,cpuRes, monitorRes, printerRes, upsRes] = await Promise.all([
+          fetch("/api/getAllLabs"),
+          fetch("/api/getItems?item=cpu"),
+          fetch("/api/getItems?item=monitor"),
+          fetch("/api/getItems?item=printer"),
+          fetch("/api/getItems?item=ups"),
+        ]);
 
-      try {
-        const response = await fetch("/api/getItems?item=printer");
-        const data = await response.json();
-        setPrinter(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        const [labs,cpu, monitor, printer, ups] = await Promise.all([
+          labres.json(),
+          cpuRes.json(),
+          monitorRes.json(),
+          printerRes.json(),
+          upsRes.json(),
+        ]);
 
-      try {
-        const response = await fetch("/api/getItems?item=ups");
-        const data = await response.json();
-        setUps(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setLabs(labs);
+        setCpus(cpu);
+        setMonitor(monitor);
+        setPrinter(printer);
+        setUps(ups);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching items:", error);
+        }
       }
+     setLoading(false);
     }
 
-    fetchallItems();
-  }, []);
+    fetchAllItems();
+
+  }, [labFetch]);
 
 
 

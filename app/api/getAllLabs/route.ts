@@ -1,10 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma";
 import { NextResponse } from "next/server";
-
-
-const prisma = new PrismaClient();
-
-// need lab in ascending order
 
 export async function GET() {
     try {
@@ -18,7 +13,7 @@ export async function GET() {
 
         return NextResponse.json(labs, { status: 200 });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Internal Server Error in GET /api/getAllrooms";
+        const message = error instanceof Error ? error.message : "Internal Server Error in GET /api/getAllLabs";
         return NextResponse.json({ message }, { status: 500 });
     }
 }

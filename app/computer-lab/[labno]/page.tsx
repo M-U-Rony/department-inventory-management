@@ -18,7 +18,7 @@ export default function ComputerLabPage() {
     async function fetchDesks() {
       setLoading(true);
       try {
-        const response = await fetch(`/api/getRoom?name=${params.labno}`);
+        const response = await fetch(`/api/getLab?name=${params.labno}`);
         const data = await response.json();
         // console.log("Fetched data:", data);
         setDesks(data.desks || []);

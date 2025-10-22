@@ -135,7 +135,7 @@ export default function Sidebar({
               <>
                 <span className="font-medium text-sm">Computer-Lab</span>
                 <button
-                  className="p-1 rounded hover:bg-[var(--surface-muted)]"
+                  className="p-1 rounded hover:bg-[var(--surface-muted)] cursor-pointer"
                   onClick={() => setShowLabForm(true)}
                 >
                   <FiPlus />
@@ -202,7 +202,7 @@ export default function Sidebar({
                         </span>
                         <button
                           onClick={(e) => handleEditName(lab.id, lab.name, e)}
-                          className="p-1 rounded hover:bg-[var(--surface-muted)] transition"
+                          className="p-1 rounded hover:bg-[var(--surface-muted)] transition cursor-pointer"
                         >
                           <FiEdit2 />
                         </button>
