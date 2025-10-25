@@ -21,10 +21,8 @@ export default function ComputerLabPage() {
       try {
         const response = await fetch(`/api/getLab?name=${params.labno}`);
         const data = await response.json();
-        // console.log("Fetched data:", data);
         setDesks(data.desks || []);
         setLayout(data.layout || "1");
-        // Resync selectedDesk reference with the freshly fetched desks
         setSelectedDesk((prev) => {
           if (!prev) return prev;
           const updated = (data.desks || []).find((d: Desk) => d.id === prev.id);

@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     const { name, layout, rows } = JSON.parse(body);
 
-    console.log(name, layout, rows);
+    // console.log(name, layout, rows);
 
     if (!name || !layout || !rows) {
       return NextResponse.json({ message: "Lab name is required" }, { status: 400 });

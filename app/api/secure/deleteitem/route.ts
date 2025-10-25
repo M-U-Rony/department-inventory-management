@@ -29,6 +29,16 @@ export async function DELETE(req: Request) {
                     where: { id: parseInt(id, 10) },
                 });
                 break;
+            case "almari":
+                await prisma.almari.delete({
+                    where: { id: parseInt(id, 10) },
+                });
+                break;
+            case "bookshelf":
+                await prisma.bookshelf.delete({
+                    where: { id: parseInt(id, 10) },
+                });
+                break;
             case "ups":
                 await prisma.ups.delete({
                     where: { id: parseInt(id, 10) },

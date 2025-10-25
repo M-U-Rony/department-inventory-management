@@ -34,16 +34,17 @@ export async function GET(req: Request) {
         }
 
         else if(item === "almari") {
-
-            const unassignedItems = await prisma.almari.findMany({});
-
+            const unassignedItems = await prisma.almari.findMany({ where: { roomId: null } });
             return NextResponse.json(unassignedItems, { status: 200 });
         }
 
         else if(item === "printer") {
+            const unassignedItems = await prisma.printer.findMany({ where: { roomId: null } });
+            return NextResponse.json(unassignedItems, { status: 200 });
+        }
 
-            const unassignedItems = await prisma.printer.findMany({});
-
+        else if(item === "bookshelf") {
+            const unassignedItems = await prisma.bookshelf.findMany({ where: { roomId: null } });
             return NextResponse.json(unassignedItems, { status: 200 });
         }
 
