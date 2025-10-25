@@ -66,7 +66,6 @@ export async function PUT(req: NextRequest) {
       const dataToUpdate: Prisma.PrinterUpdateInput = {};
       if (typeof n.name === "string") dataToUpdate.name = n.name;
       if (typeof n.brand === "string") dataToUpdate.brand = n.brand;
-      if (typeof n.location === "string") dataToUpdate.location = n.location;
       if (typeof n.status === "string") dataToUpdate.status = n.status;
       if (typeof (n as { Note?: unknown }).Note === "string") dataToUpdate.Note = (n as { Note?: string }).Note;
       updatedItem = await prisma.printer.update({
@@ -77,7 +76,6 @@ export async function PUT(req: NextRequest) {
       const n = normalized;
       const dataToUpdate: Prisma.UpsUpdateInput = {};
       if (typeof n.name === "string") dataToUpdate.name = n.name;
-      if (typeof n.location === "string") dataToUpdate.location = n.location;
       if (typeof n.status === "string") dataToUpdate.status = n.status;
       if (typeof (n as { Note?: unknown }).Note === "string") dataToUpdate.Note = (n as { Note?: string }).Note;
       updatedItem = await prisma.ups.update({
