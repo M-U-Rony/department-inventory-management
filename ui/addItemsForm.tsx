@@ -110,6 +110,8 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
             </div>
           </div>
 
+          { (title === "cpu" || title === "monitor" || title == "printer") && (
+            
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <label className="text-sm muted-text w-40 sm:w-48">
               Brand Name
@@ -129,6 +131,8 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
               </datalist>
             </div>
           </div>
+          )
+          }
 
           {title === "cpu" ? (
             <>

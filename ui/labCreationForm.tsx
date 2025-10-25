@@ -50,7 +50,7 @@ export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/secure/createRoom", {
+      const response = await fetch("/api/secure/createLab", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -209,7 +209,7 @@ export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
               htmlFor="rowsPerColumn"
               className="block text-sm font-medium mb-2"
             >
-              How many rows in each column?
+              Total Rows
             </label>
             <input
               type="number"

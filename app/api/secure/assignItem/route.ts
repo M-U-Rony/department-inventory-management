@@ -30,6 +30,12 @@ export async function GET(req: Request) {
                     data: { desk: { connect: { id: deskIdNum } } },
                 });
                 break;
+                case "ups":
+                result = await prisma.ups.update({
+                    where: { id: itemId },
+                    data: { desk: { connect: { id: deskIdNum } } },
+                });
+                break;
             default:
                 return NextResponse.json({ message: "Invalid item type" }, { status: 400 });
         }

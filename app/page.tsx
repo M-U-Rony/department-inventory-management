@@ -11,6 +11,8 @@ export default function Home() {
   const [monitor, setMonitor] = useState([]);
   const [printer, setPrinter] = useState([]);
   const [ups, setUps] = useState([]);
+  const [almari, setAlmari] = useState([]);
+  const [bookshelf, setBookshelf] = useState([]);
   const [labs, setLabs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [labFetch, setLabFetch] = useState(false);
@@ -26,20 +28,24 @@ export default function Home() {
       setLoading(true);
 
       try {
-        const [labres,cpuRes, monitorRes, printerRes, upsRes] = await Promise.all([
+        const [labres,cpuRes, monitorRes, printerRes, upsRes,almariRes,bookshelfRes] = await Promise.all([
           fetch("/api/getAllLabs"),
           fetch("/api/getItems?item=cpu"),
           fetch("/api/getItems?item=monitor"),
           fetch("/api/getItems?item=printer"),
           fetch("/api/getItems?item=ups"),
+          fetch("/api/getItems?item=almari"),
+          fetch("/api/getItems?item=bookshelf"),
         ]);
 
-        const [labs,cpu, monitor, printer, ups] = await Promise.all([
+        const [labs,cpu, monitor, printer, ups,almari,bookshelf] = await Promise.all([
           labres.json(),
           cpuRes.json(),
           monitorRes.json(),
           printerRes.json(),
           upsRes.json(),
+          almariRes.json(),
+          bookshelfRes.json(),
         ]);
 
         setLabs(labs);
@@ -47,10 +53,11 @@ export default function Home() {
         setMonitor(monitor);
         setPrinter(printer);
         setUps(ups);
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
-          console.error("Error fetching items:", error);
-        }
+        setAlmari(almari);
+        setBookshelf(bookshelf);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Error in fetching item";
+        console.log(message);
       }
      setLoading(false);
     }
@@ -74,11 +81,13 @@ export default function Home() {
       {/*sidebar*/}
       <Sidebar labs={labs} onNewLab={onNewLab}/>
 
-      <div className="flex flex-wrap gap-6 items-start mt-16 justify-center">
+      <div className="flex flex-wrap gap-x-6 gap-y-10 mt-16 mb-16">
         <SummaryCard title="CPU" items={cpus} />
         <SummaryCard title="MONITOR" items={monitor} />
         <SummaryCard title="PRINTER" items={printer} />
         <SummaryCard title="UPS" items={ups} />
+        <SummaryCard title="ALMARI" items={almari} />
+        <SummaryCard title="BOOKSHELF" items={bookshelf} />
       </div>
     </main>
   );

@@ -1,73 +1,75 @@
 import { prisma } from "../../../lib/prisma";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
-    const item = searchParams.get("item");
+  const { searchParams } = new URL(req.url);
+  const item = searchParams.get("item");
 
-    // console.log("Fetching items of type:", item);
+  // console.log("Fetching items of type:", item);
 
-    if (!item) {
-        return NextResponse.json({ error: "Item not specified" }, { status: 400 });
-    }
+  if (!item) {
+    return NextResponse.json({ error: "Item not specified" }, { status: 400 });
+  }
 
-    const model = item.toLowerCase();
-    let allitems;
+  const model = item.toLowerCase();
 
-    switch (model) {
-  case "cpu":
-    allitems = await prisma.cpu.findMany({
-      include: {
-        desk: {
-          include: {
-            lab: true
-          }
-        }
-      },
-      orderBy: { id: "asc" },
-    });
-    break;
+  let allitems;
 
-  case "monitor":
-    allitems = await prisma.monitor.findMany({
-      include: {
-        desk: {
-          include: {
-            lab: true
-          }
-        }
-      },
-      orderBy: { id: "asc" },
-    });
-    break;
+  switch (model) {
+    case "cpu":
+      allitems = await prisma.cpu.findMany({
+        include: {
+          desk: {
+            include: {
+              lab: true,
+            },
+          },
+        },
+        orderBy: { id: "asc" },
+      });
+      break;
 
-  case "printer":
-    allitems = await prisma.printer.findMany({
-      orderBy: { id: "asc" },
-    });
-    break;
+    case "monitor":
+      allitems = await prisma.monitor.findMany({
+        include: {
+          desk: {
+            include: {
+              lab: true,
+            },
+          },
+        },
+        orderBy: { id: "asc" },
+      });
+      break;
 
-  case "ups":
-    allitems = await prisma.ups.findMany({
-      orderBy: { id: "asc" },
-    });
-    break;
+    case "printer":
+      allitems = await prisma.printer.findMany({
+        orderBy: { id: "asc" },
+      });
+      break;
 
-  case "desk":
-    allitems = await prisma.desk.findMany({
-      orderBy: { id: "asc" },
-    });
-    break;
+    case "ups":
+      allitems = await prisma.ups.findMany({
+        orderBy: { id: "asc" },
+      });
+      break;
 
-  default:
-    return NextResponse.json({ error: "Invalid item type" }, { status: 400 });
-}
+    case "almari":
+      allitems = await prisma.almari.findMany({
+        orderBy: { id: "asc" },
+      });
+      break;
 
+    case "bookshelf":
+      allitems = await prisma.bookshelf.findMany({
+        orderBy: { id: "asc" },
+      });
+      break;
 
-    // console.log(allitems)
+    default:
+      return NextResponse.json({ error: "Invalid item type" }, { status: 400 });
+  }
+  // console.log(allitems)
 
-    return NextResponse.json(allitems);
+  return NextResponse.json(allitems);
 }

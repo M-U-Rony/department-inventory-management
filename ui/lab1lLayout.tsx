@@ -72,8 +72,8 @@ export default function Lab1Layout({
 
       {/* Desk Info Modal */}
       {selectedDesk && (
-        <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 z-50">
-          <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+          <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm max-h-[90vh] overflow-y-auto">
             <div className="flex justify-end">
               <button
                 onClick={handleCloseModal}

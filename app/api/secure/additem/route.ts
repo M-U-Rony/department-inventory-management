@@ -11,9 +11,6 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { name, brand, processor, ram, hdd, ssd, gpu, status, note } = body;
 
-        // console.log(body);
-
-
 
         if (!name) {
             return NextResponse.json({ error: "Missing required fields: name, processor, and ram are required." }, { status: 400 });
@@ -82,6 +79,32 @@ export async function POST(req: Request) {
                 });
 
                 return NextResponse.json(newUps, { status: 201 });
+            }
+
+             else if (item == "almari") {
+
+                const newAlmari = await prisma.almari.create({
+                    data: {
+                        name,
+                        status,
+                        Note: note,
+                    },
+                });
+
+                return NextResponse.json(newAlmari, { status: 201 });
+            }
+
+             else if (item == "bookshelf") {
+
+                const newBookshelf = await prisma.bookshelf.create({
+                    data: {
+                        name,
+                        status,
+                        Note: note,
+                    },
+                });
+
+                return NextResponse.json(newBookshelf, { status: 201 });
             }
 
             else {

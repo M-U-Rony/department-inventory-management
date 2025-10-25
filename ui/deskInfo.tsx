@@ -23,8 +23,8 @@ export default function DeskInfo({ desk, handleCloseModal, onAssignOrWithdraw }:
   const [loading, setLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState("");
   const [assigningId, setAssigningId] = useState<number | null>(null);
-  const [optimisticWithdraw, setOptimisticWithdraw] = useState<"monitor" | "cpu" | "">("");
-  const [withdrawErrorItem, setWithdrawErrorItem] = useState<"" | "monitor" | "cpu">("");
+  const [optimisticWithdraw, setOptimisticWithdraw] = useState<"monitor" | "cpu" | "ups" | "">("");
+  const [withdrawErrorItem, setWithdrawErrorItem] = useState<"" | "monitor" | "cpu" | "ups">("");
   const [withdrawErrorMessage, setWithdrawErrorMessage] = useState<string>("");
 
   // console.log("Desk info:", desk);
@@ -59,7 +59,7 @@ export default function DeskInfo({ desk, handleCloseModal, onAssignOrWithdraw }:
       setWithdrawErrorItem("");
       setWithdrawErrorMessage("");
       setWithdrawLoading(item);
-      if (item === "monitor" || item === "cpu") setOptimisticWithdraw(item as "monitor" | "cpu");
+      if (item === "monitor" || item === "cpu" || item === "ups") setOptimisticWithdraw(item as "monitor" | "cpu" | "ups");
       const response = await fetch(
         `/api/secure/withdrawItem?item=${item}&id=${itemId}&deskId=${desk?.id}`,
         {
@@ -217,7 +217,7 @@ export default function DeskInfo({ desk, handleCloseModal, onAssignOrWithdraw }:
                 desk.monitorId &&
                 handleItemWithdraw(desk.monitorId, "monitor")
               }
-              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md  text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 dark:border-neutral-200"
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md  text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 dark:border-neutral-200 cursor-pointer"
               disabled={Boolean(withdrawLoading) || assigningId !== null || loading}
             >
               {withdrawLoading === "monitor" ? (
@@ -290,6 +290,65 @@ export default function DeskInfo({ desk, handleCloseModal, onAssignOrWithdraw }:
           </div>
         )}
       </div>
+
+    {/* Ups */}
+
+      <div className="mb-8 mt-8">
+        <h3 className="text-2xl text-center font-mono mb-4">UPS</h3>
+        {desk?.upsId == null || optimisticWithdraw === "ups" ? (
+          <div className="text-center">
+            <p className=" mb-4">This desk doesn't contain any Ups</p>
+            {withdrawLoading === "ups" ? (
+              <div className="flex flex-col items-center gap-2 py-2">
+                <LoadingSpinner />
+                <span className="text-sm text-secondary">Withdrawing Ups...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleAssign("ups")}
+                className="px-5 py-2.5 text-sm font-medium rounded-md bg-[var(--btn-bg)] text-[var(--btn-text)] transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                disabled={loading || Boolean(withdrawLoading)}
+              >
+                {loading && currentItemType === "ups" ? (
+                  <LoadingSpinner />
+                ) : (
+                  "Assign"
+                )}
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col mt-1 gap-y-2">
+            <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">Name: {desk.ups?.name}</span>
+           <span className="px-2 py-0.5 text-sm font-medium leading-6 tracking-tight">
+              Condition:
+              <span
+                className={`ml-2 inline-block rounded px-2 py-0.5 text-xs font-semibold text-white ${desk.ups?.status === "working"
+                  ? "bg-green-500"
+                  : "bg-red-500"}`}
+              >
+                {desk.ups?.status}
+              </span>
+            </span>
+        
+            <button
+              onClick={() =>
+                desk.upsId &&
+                handleItemWithdraw(desk.upsId, "ups")
+              }
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md  text-red-400 hover:bg-neutral-900 bg-[var(--btn-bg)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed border border-neutral-800 dark:border-neutral-200 cursor-pointer"
+              disabled={Boolean(withdrawLoading) || assigningId !== null || loading}
+            >
+              {withdrawLoading === "ups" ? (
+                <LoadingSpinner />
+              ) : (
+                "Withdraw"
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    
     </div>
   );
 }

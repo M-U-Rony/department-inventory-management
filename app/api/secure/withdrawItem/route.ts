@@ -20,15 +20,22 @@ export async function GET(req: Request) {
             case "cpu":
                 result = await prisma.cpu.update({
                     where: { id: itemId },
-                    data: { desk: { disconnect: true } }, // Deallocate the CPU from the desk
+                    data: { desk: { disconnect: true } },
                 });
                 break;
             case "monitor":
                 result = await prisma.monitor.update({
                     where: { id: itemId },
-                    data: { desk: { disconnect: true } }, // Deallocate the Monitor from the desk
+                    data: { desk: { disconnect: true } },
                 });
                 break;
+            case "ups":
+                result = await prisma.ups.update({
+                    where: { id: itemId },
+                    data: { desk: { disconnect: true } },
+                });
+                break;
+                
             default:
                 return NextResponse.json({ message: "Invalid item type" }, { status: 400 });
         }

@@ -42,8 +42,9 @@ model Printer{
  id         Int      @id @default(autoincrement())
  name       String
  brand      String
- location   String    @default("Not assigned")
  status     String    @default("working")
+ roomId     Int?      
+ room       Room?     @relation(fields: [roomId], references: [id])
  Note       String?
  createdAt  DateTime  @default(now())
  updatedAt  DateTime  @updatedAt
@@ -54,11 +55,11 @@ model Ups{
 
  id         Int      @id @default(autoincrement())
  name       String
- location   String    @default("Not assigned")
- status     String    @default("working")
+ status     String    @default("working")    
  Note       String?
  createdAt  DateTime  @default(now())
  updatedAt  DateTime  @updatedAt
+ desk       Desk?
 
 }
 
@@ -74,12 +75,16 @@ model Lab {
 model Desk {
   id         Int      @id @default(autoincrement())
   deskNo     String
-  labId      Int      
-  lab        Lab      @relation(fields: [labId], references: [id])
+  labId      Int?      
+  lab        Lab?      @relation(fields: [labId], references: [id])
+  roomId     Int?      
+  room       Room?     @relation(fields: [roomId], references: [id])
   cpuId      Int?     @unique
   cpu        Cpu?     @relation(fields: [cpuId], references: [id])
   monitorId  Int?     @unique
   monitor    Monitor? @relation(fields: [monitorId], references: [id])
+  upsId      Int?     @unique
+  ups        Ups?     @relation(fields: [upsId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -88,9 +93,10 @@ model Almari{
 
  id         Int      @id @default(autoincrement())
  name       String
- location   String    @default("Not assigned")
  status     String    @default("working")
  Note       String?
+ roomId     Int?      
+ room       Room?     @relation(fields: [roomId], references: [id])
  createdAt  DateTime  @default(now())
  updatedAt  DateTime  @updatedAt
 
@@ -100,8 +106,9 @@ model Bookshelf{
 
  id         Int      @id @default(autoincrement())
  name       String
- location   String    @default("Not assigned")
  status     String    @default("working")
+ roomId     Int?      
+ room       Room?     @relation(fields: [roomId], references: [id])
  Note       String?
  createdAt  DateTime  @default(now())
  updatedAt  DateTime  @updatedAt
@@ -111,7 +118,10 @@ model Bookshelf{
 model Room {
   id         Int      @id @default(autoincrement())
   name       String   @unique
-
+  desks       Desk[]
+  almari     Almari[]
+  bookshelf Bookshelf[]
+  printers   Printer[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

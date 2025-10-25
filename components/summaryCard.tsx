@@ -4,6 +4,9 @@ import { RiComputerLine } from "react-icons/ri";
 import { PiComputerTower } from "react-icons/pi";
 import { FiPrinter } from "react-icons/fi";
 import { CiBatteryCharging } from "react-icons/ci";
+import { TfiLayoutAccordionMerged } from "react-icons/tfi";
+import { RiBookShelfLine } from "react-icons/ri";
+
 
 type Item = {
   id: number;
@@ -44,6 +47,12 @@ export default function SummaryCard({ title, items}: CardProps) {
   }
   else if(title == 'UPS'){
     Icon = CiBatteryCharging;
+  }
+   else if(title == 'ALMARI'){
+    Icon = TfiLayoutAccordionMerged;
+  }
+   else if(title == 'BOOKSHELF'){
+    Icon = RiBookShelfLine;
   }
 
 

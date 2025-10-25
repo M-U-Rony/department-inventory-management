@@ -24,6 +24,28 @@ export async function GET(req: Request) {
 
             return NextResponse.json(unassignedItems, { status: 200 });
         }
+        else if(item === "ups") {
+
+            const unassignedItems = await prisma.ups.findMany({
+                where: { desk: null }
+            });
+
+            return NextResponse.json(unassignedItems, { status: 200 });
+        }
+
+        else if(item === "almari") {
+
+            const unassignedItems = await prisma.almari.findMany({});
+
+            return NextResponse.json(unassignedItems, { status: 200 });
+        }
+
+        else if(item === "printer") {
+
+            const unassignedItems = await prisma.printer.findMany({});
+
+            return NextResponse.json(unassignedItems, { status: 200 });
+        }
 
         return NextResponse.json( { message: "Invalid item type" }, { status: 400 });
     } catch (error) {

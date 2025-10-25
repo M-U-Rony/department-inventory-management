@@ -26,7 +26,18 @@ export interface Desk {
     createdAt: string;
     updatedAt: string;
   } | null;
-  monitorId: number | null;
+
+   monitorId: number | null;
+
+  ups: {
+    id: number;
+    name: string;
+    status: string;
+    Note: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+ 
   upsId: number | null;
   createdAt: string;
   updatedAt: string;
