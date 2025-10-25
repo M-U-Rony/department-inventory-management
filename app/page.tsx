@@ -14,6 +14,7 @@ export default function Home() {
   const [almari, setAlmari] = useState([]);
   const [bookshelf, setBookshelf] = useState([]);
   const [labs, setLabs] = useState([]);
+  const [rooms, setrooms] = useState([])
   const [loading, setLoading] = useState(true);
   const [labFetch, setLabFetch] = useState(false);
 
@@ -28,8 +29,9 @@ export default function Home() {
       setLoading(true);
 
       try {
-        const [labres,cpuRes, monitorRes, printerRes, upsRes,almariRes,bookshelfRes] = await Promise.all([
+        const [labres,roomres,cpuRes, monitorRes, printerRes, upsRes,almariRes,bookshelfRes] = await Promise.all([
           fetch("/api/getAllLabs"),
+          fetch("/api/getAllRooms"),
           fetch("/api/getItems?item=cpu"),
           fetch("/api/getItems?item=monitor"),
           fetch("/api/getItems?item=printer"),
@@ -38,8 +40,9 @@ export default function Home() {
           fetch("/api/getItems?item=bookshelf"),
         ]);
 
-        const [labs,cpu, monitor, printer, ups,almari,bookshelf] = await Promise.all([
+        const [labs,rooms,cpu, monitor, printer, ups,almari,bookshelf] = await Promise.all([
           labres.json(),
+          roomres.json(),
           cpuRes.json(),
           monitorRes.json(),
           printerRes.json(),
@@ -49,6 +52,7 @@ export default function Home() {
         ]);
 
         setLabs(labs);
+        setrooms(rooms)
         setCpus(cpu);
         setMonitor(monitor);
         setPrinter(printer);
@@ -79,7 +83,7 @@ export default function Home() {
   return (
     <main className="flex min-w-screen gap-6">
       {/*sidebar*/}
-      <Sidebar labs={labs} onNewLab={onNewLab}/>
+      <Sidebar labs={labs} rooms={rooms} onNewLab={onNewLab}/>
 
       <div className="flex flex-wrap gap-x-6 gap-y-10 mt-16 mb-16">
         <SummaryCard title="CPU" items={cpus} />

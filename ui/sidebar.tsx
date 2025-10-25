@@ -14,20 +14,33 @@ interface Lab {
   updatedAt: string;
 }
 
+interface Room {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function Sidebar({
   labs,
+  rooms,
   onNewLab,
 }: {
   labs: Lab[];
+  rooms: Room[];
   onNewLab: () => void;
 }) {
   const router = useRouter();
   const [showLabForm, setShowLabForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [editingLabId, setEditingLabId] = useState<number | null>(null);
-  const [editLabName, setEditLabName] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState("");
+  const [category, setCategory] = useState("");
   const [isEditLoading, setIsEditLoading] = useState(false);
+  const [showRoomForm, setShowRoomForm] = useState(false);
+  const [newRoomName, setNewRoomName] = useState("");
+  const [isRoomCreating, setIsRoomCreating] = useState(false);
 
   // Check screen size and adjust sidebar
   useEffect(() => {
@@ -45,30 +58,36 @@ export default function Sidebar({
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   function handleEditName(
-    labId: number,
+    Id: number,
     currentName: string,
-    event: React.MouseEvent
+    event: React.MouseEvent,
+    category: string
+
   ) {
-    event.stopPropagation(); // Prevent navigation to lab page
-    setEditingLabId(labId);
-    setEditLabName(currentName);
+    event.stopPropagation();
+    setEditingId(Id);
+    setEditName(currentName);
+    setCategory(category);
   }
 
   function handleCancelEdit() {
-    setEditingLabId(null);
-    setEditLabName("");
+    setEditingId(null);
+    setEditName("");
+    setCategory("");
   }
 
   async function handleSaveEdit() {
-    if (editLabName.trim() && editingLabId) {
+    if (editName.trim() && editingId) {
       setIsEditLoading(true);
+
       try {
-        const res = await fetch("/api/secure/updateRoomName", {
+        const res = await fetch("/api/secure/updateLabOrRoomName", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: editingLabId,
-            name: editLabName.trim(),
+            id: editingId,
+            name: editName.trim(),
+            category: category,
           }),
         });
 
@@ -80,8 +99,8 @@ export default function Sidebar({
         if (res.ok) {
           toast.success("Lab name updated successfully");
           onNewLab(); // Refresh the lab list
-          setEditingLabId(null);
-          setEditLabName("");
+          setEditingId(null);
+          setEditName("");
         } else {
           toast.error("Failed to update lab name");
         }
@@ -91,6 +110,41 @@ export default function Sidebar({
       } finally {
         setIsEditLoading(false);
       }
+    }
+  }
+
+  function handleCreateRoom(){
+    setShowRoomForm(true);
+  }
+
+  async function handleSubmitRoom(){
+    if (!newRoomName.trim()) return;
+    setIsRoomCreating(true);
+    try {
+      const res = await fetch("/api/secure/createRoom", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newRoomName.trim() }),
+      });
+
+      if (res.status === 401) {
+        if (typeof window !== "undefined") window.location.href = "/signin";
+        return;
+      }
+
+      if (res.ok) {
+        toast.success("Room created successfully");
+        setShowRoomForm(false);
+        setNewRoomName("");
+        onNewLab();
+      } else {
+        toast.error("Failed to create room");
+      }
+    } catch (error) {
+      console.error("Error creating room:", error);
+      toast.error("Error creating room");
+    } finally {
+      setIsRoomCreating(false);
     }
   }
 
@@ -155,12 +209,12 @@ export default function Sidebar({
             labs.map((lab, i) => (
               <div key={i} className="space-y-2">
                 {/* Edit Input (when in edit mode) */}
-                {editingLabId === lab.id && !isCollapsed ? (
+                {editingId === lab.id && category === "lab" && !isCollapsed ? (
                   <div className="px-3 py-2 space-y-2">
                     <input
                       type="text"
-                      value={editLabName}
-                      onChange={(e) => setEditLabName(e.target.value)}
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleSaveEdit();
@@ -206,7 +260,7 @@ export default function Sidebar({
                           {lab.name}
                         </span>
                         <button
-                          onClick={(e) => handleEditName(lab.id, lab.name, e)}
+                          onClick={(e) => handleEditName(lab.id, lab.name, e,"lab")}
                           className="p-1 rounded hover:bg-[var(--surface-muted)] transition cursor-pointer"
                         >
                           <FiEdit2 />
@@ -224,7 +278,140 @@ export default function Sidebar({
         </div>
 
 
-        
+
+         {/* Teacher's Room Section */}
+
+        <div className="p-4 space-y-3">
+          <div className="flex justify-between items-center px-3 py-2 rounded hover:bg-[var(--surface-muted)] transition">
+            {!isCollapsed && (
+              <>
+                <span className="font-medium text-sm">Teacher's Room</span>
+                <button
+                  className="p-1 rounded hover:bg-[var(--surface-muted)] cursor-pointer"
+                 onClick={handleCreateRoom}
+                >
+                  <FiPlus />
+                </button>
+              </>
+            )}
+            {isCollapsed && <FiMonitor size={20} className="mx-auto" />}
+          </div>
+
+          {showRoomForm && !isCollapsed && (
+            <div className="px-3 py-2 space-y-2">
+              <input
+                type="text"
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmitRoom();
+                  } else if (e.key === "Escape") {
+                    setShowRoomForm(false);
+                    setNewRoomName("");
+                  }
+                }}
+                className="w-full px-3 py-2 text-sm rounded border border-[var(--border)] bg-[var(--surface-muted)]"
+                placeholder="Enter room name"
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleSubmitRoom}
+                  disabled={isRoomCreating}
+                >
+                  {isRoomCreating ? (
+                    <>Creating...</>
+                  ) : (
+                    <>
+                      <FiSave /> Save
+                    </>
+                  )}
+                </button>
+                <button
+                  className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
+                  onClick={() => { setShowRoomForm(false); setNewRoomName(""); }}
+                >
+                  <FiX /> Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Room List */}
+          {rooms.length > 0 &&
+            rooms.map((room, i) => (
+              <div key={i} className="space-y-2">
+                {/* Edit Input (when in edit mode) */}
+                {editingId === room.id && category === "room" && !isCollapsed ? (
+                  <div className="px-3 py-2 space-y-2">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSaveEdit();
+                        } else if (e.key === "Escape") {
+                          handleCancelEdit();
+                        }
+                      }}
+                      className="w-full px-3 py-2 text-sm rounded border border-[var(--border)] bg-[var(--surface-muted)]"
+                      placeholder="Enter lab name"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleSaveEdit}
+                        disabled={isEditLoading}
+                      >
+                        {isEditLoading ? (
+                          <>Updating...</>
+                        ) : (
+                          <>
+                            <FiSave /> Save
+                          </>
+                        )}
+                      </button>
+                      <button
+                        className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
+                        onClick={handleCancelEdit}
+                      >
+                        <FiX /> Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+            
+                  <div
+                    onClick={() => router.push(`room/${room.name}`)}
+                    className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition"
+                  >
+                    {!isCollapsed ? (
+                      <>
+                        <span className="truncate text-sm flex-1">
+                          {room.name}
+                        </span>
+                        <button
+                          onClick={(e) => handleEditName(room.id, room.name, e,"room")}
+                          className="p-1 rounded hover:bg-[var(--surface-muted)] transition cursor-pointer"
+                        >
+                          <FiEdit2 />
+                        </button>
+                      </>
+                    ) : (
+                      <span className="mx-auto text-sm font-medium">
+                        {room.name}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+        </div>
+
       </div>
 
       {/* Overlay for mobile */}
