@@ -3,27 +3,23 @@ import { prisma } from "../../../../lib/prisma";
 
 
 export async function POST(req: Request) {
+    const { category, roomId } = await req.json();
 
-    const {category,roomId} = await req.json();
-
-    console.log(category,roomId)
-
-    if(category === 'desk'){
-
-        const newDesk = await prisma.desk.create({
-
-            data: {
-                deskNo: "",
-                roomId: roomId,
-            }
-        })
-
-        return NextResponse.json({ message: "Desk created", deskId: newDesk.id }, { status: 201 })
+    if (category !== 'desk') {
+        return NextResponse.json({ error: "Unsupported category" }, { status: 400 });
     }
 
-    // No creation for printer/bookshelf/almari here; those are created via additem route
+    const roomIdNum = Number(roomId);
+    if (!roomId || Number.isNaN(roomIdNum)) {
+        return NextResponse.json({ error: "roomId is required and must be a number" }, { status: 400 });
+    }
 
-    return NextResponse.json({ error: "Unsupported category" }, { status: 400 })
+    const newDesk = await prisma.desk.create({
+        data: {
+            deskNo: "",
+            roomId: roomIdNum,
+        }
+    });
 
-   
+    return NextResponse.json({ message: "Desk created", deskId: newDesk.id }, { status: 201 });
 }

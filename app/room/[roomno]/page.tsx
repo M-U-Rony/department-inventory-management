@@ -108,6 +108,10 @@ export default function Room() {
   };
 
   async function addItem(label: "desk") {
+    if (!roomId) {
+      toast.error("Room is not ready yet. Please wait and try again.");
+      return;
+    }
     const value = label;
     const res = await fetch("/api/secure/assignItemInRoom", {
       method: "POST",
@@ -149,7 +153,8 @@ export default function Room() {
               <h3 className="text-sm font-medium">Desks</h3>
               <button
                 onClick={() => addItem("desk")}
-                className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer"
+                disabled={loading || !roomId}
+                className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Assign
               </button>

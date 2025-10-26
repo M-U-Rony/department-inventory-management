@@ -21,17 +21,15 @@ export async function GET(req: Request) {
         },
         almari: {},
         printers: {},
-        bookshelf:{}
+        bookshelf: {}
       },
     });
 
+    if (!room) {
+      return NextResponse.json({ message: "Room not found" }, { status: 404 });
+    }
 
-    return NextResponse.json(
-      {
-        message: "Room fetched",
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ room }, { status: 200 });
   } catch (error) {
     const message =
       error instanceof Error
