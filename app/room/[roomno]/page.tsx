@@ -352,14 +352,14 @@ export default function Room() {
           onClick={() => setSelectedDesk(null)}
         >
           <div
-            className="card-surface w-full max-w-2xl rounded-xl border border-[color:var(--border)] p-5 relative"
+            className="card-surface w-full max-w-2xl rounded-xl border border-[color:var(--border)] p-5 relative max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-semibold">Desk details</h3>
+              <h3 className="text-base font-semibold">PC Details</h3>
               <button
-                onClick={() => setSelectedDesk(null)}
                 className="p-1 rounded hover:bg-[color:var(--surface-muted)] cursor-pointer"
+                onClick={() => setSelectedDesk(null)}
               >
                 ×
               </button>
