@@ -163,11 +163,11 @@ export default function Sidebar({
 
       {/* Sidebar */}
       <div
-        className={`fixed md:relative top-0 left-0 h-screen transition-all duration-300 z-20 border-r border-[var(--border)] bg-[var(--surface)] shadow-md md:shadow-none
+        className={`fixed md:relative top-0 left-0 h-screen transition-all duration-300 z-20 border-r border-[var(--border)] bg-[var(--surface)] shadow-md md:shadow-none overflow-x-hidden shrink-0
         ${
           isCollapsed
-            ? "-translate-x-full md:translate-x-0 md:w-16"
-            : "translate-x-0 w-64"
+            ? "-translate-x-full md:translate-x-0 md:w-16 md:min-w-[4rem] md:max-w-[4rem]"
+            : "translate-x-0 w-64 min-w-[16rem] max-w-[16rem]"
         }`}
       >
         {/* Header */}
@@ -208,7 +208,7 @@ export default function Sidebar({
           {labs.length > 0 &&
             labs.map((lab, i) => (
               <div key={i} className="space-y-2">
-                {/* Edit Input (when in edit mode) */}
+              
                 {editingId === lab.id && category === "lab" && !isCollapsed ? (
                   <div className="px-3 py-2 space-y-2">
                     <input
@@ -252,7 +252,7 @@ export default function Sidebar({
                   /* Normal Lab Display */
                   <div
                     onClick={() => router.push(`/computer-lab/${lab.name}`)}
-                    className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition"
+                    className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition overflow-hidden"
                   >
                     {!isCollapsed ? (
                       <>
@@ -267,7 +267,7 @@ export default function Sidebar({
                         </button>
                       </>
                     ) : (
-                      <span className="mx-auto text-sm font-medium">
+                      <span className="mx-auto text-sm font-medium truncate max-w-full">
                         {lab.name}
                       </span>
                     )}

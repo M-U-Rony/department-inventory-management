@@ -14,6 +14,12 @@ interface ApiItem extends Item {
     lab: {
       name: string;
     };
+    room?: {
+      name: string;
+    } | null;
+  } | null;
+  room?: {
+    name: string;
   } | null;
 }
 
@@ -40,14 +46,24 @@ export default function ManageItems() {
         const transformedData: Item[] = data.map((item: ApiItem) => {
           let location: string | null = null;
 
-          // Check if item is assigned to a desk
+          // Desk-based location (cpu/monitor)
           if (item.desk && item.desk.lab) {
             location = `${item.desk.lab.name} - ${item.desk.deskNo}`;
           }
 
+          // Desk assigned to a room (no lab)
+          if (!location && item.desk && item.desk.room) {
+            location = item.desk.room.name;
+          }
+
+          // Room-based location (printer/almari/bookshelf)
+          if (!location && item.room) {
+            location = item.room.name;
+          }
+
           return {
             ...item,
-            location: location,
+            location,
           };
         });
 

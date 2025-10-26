@@ -22,6 +22,7 @@ export async function GET(req: Request) {
           desk: {
             include: {
               lab: true,
+              room: true,
             },
           },
         },
@@ -35,6 +36,7 @@ export async function GET(req: Request) {
           desk: {
             include: {
               lab: true,
+              room: true,
             },
           },
         },
@@ -44,24 +46,41 @@ export async function GET(req: Request) {
 
     case "printer":
       allitems = await prisma.printer.findMany({
+        include: {
+          room: true,
+        },
         orderBy: { id: "asc" },
       });
       break;
 
     case "ups":
       allitems = await prisma.ups.findMany({
+        include: {
+          desk: {
+            include: {
+              lab: true,
+              room: true,
+            },
+          },
+        },
         orderBy: { id: "asc" },
       });
       break;
 
     case "almari":
       allitems = await prisma.almari.findMany({
+        include: {
+          room: true,
+        },
         orderBy: { id: "asc" },
       });
       break;
 
     case "bookshelf":
       allitems = await prisma.bookshelf.findMany({
+        include: {
+          room: true,
+        },
         orderBy: { id: "asc" },
       });
       break;
