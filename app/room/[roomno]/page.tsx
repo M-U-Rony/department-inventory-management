@@ -10,7 +10,7 @@ import { useState,useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { HashLoader } from "react-spinners";
 
-import {FiPrinter,FiBox,FiBook,FiArchive,FiTrash2} from "react-icons/fi";
+import {FiPrinter,FiBox,FiBook,FiArchive,FiTrash2,FiPlus} from "react-icons/fi";
 import { HiComputerDesktop } from "react-icons/hi2";
 
 export default function Room() {
@@ -149,17 +149,13 @@ export default function Room() {
       <div className="w-full flex justify-center">
         <section className="w-full max-w-4xl">
           <div className="rounded-xl border border-[color:var(--border)] p-4 sm:p-6 card-surface">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium">Desks</h3>
-              <button
-                onClick={() => addItem("desk")}
-                disabled={loading || !roomId}
-                className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Assign
-              </button>
+            <div className="flex items-center justify-between mb-3 border-b border-[color:var(--border)] pb-2">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-medium">Desks</h3>
+                <span className="px-2 py-0.5 text-xs rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)]">{desks.length}</span>
+              </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {desks.length > 0 ? desks.map((desk) => {
                 const label = "PC";
                 const assigned = Boolean(desk.cpuId || desk.monitorId || desk.upsId);
@@ -167,7 +163,7 @@ export default function Room() {
                 return (
                   <div
                     key={desk.id}
-                    className={`relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer ${
+                    className={`relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98] ${
                       assigned
                         ? "bg-[color:var(--surface-muted)] hover:bg-[color:var(--surface)]"
                         : "bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)]"
@@ -196,10 +192,12 @@ export default function Room() {
                       <FiTrash2 size={14} />
                     </button>
                     <div className="flex flex-col items-center gap-2 text-center px-2">
-                      <Icon
-                        size={28}
-                        className={assigned ? "opacity-90" : "opacity-60"}
-                      />
+                      <div className="rounded-full p-2 bg-[color:var(--surface)]/60">
+                        <Icon
+                          size={28}
+                          className={assigned ? "opacity-90" : "opacity-60"}
+                        />
+                      </div>
                       <div className="text-sm sm:text-base font-medium">
                         {label}
                       </div>
@@ -207,11 +205,50 @@ export default function Room() {
                   </div>
                 );
               }): null}
+              <div
+                className="relative rounded-lg border border-[color:var(--border)] border-dashed aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98] hover:border-primary/50"
+                onClick={() => addItem("desk")}
+                title="Add desk"
+                aria-label="Add desk"
+              >
+                <div className="flex flex-col items-center gap-2 text-center px-2">
+                  <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                    <FiPlus size={28} className="opacity-80" />
+                  </div>
+                  <div className="text-sm sm:text-base font-medium">Add New</div>
+                </div>
+              </div>
             </div>
             <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium">Printers</h3>
-                <button
+              <div className="flex items-center justify-between mb-3 border-b border-[color:var(--border)] pb-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium">Printers</h3>
+                  <span className="px-2 py-0.5 text-xs rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)]">{printer.length}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {printer.length > 0 ? printer.map((p: Printer) => {
+                  const label = p?.name || `Printer ${p?.id}`;
+                  const Icon = iconMap["printer"] ?? FiPrinter;
+                  return (
+                    <div
+                      key={p?.id}
+                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98]"
+                      onClick={() => setSelectedRoomItem({ type: "printer", item: p })}
+                    >
+                      <div className="flex flex-col items-center gap-2 text-center px-2">
+                        <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                          <Icon size={28} className="opacity-80" />
+                        </div>
+                        <div className="text-sm sm:text-base font-medium">{label}</div>
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  null
+                )}
+                <div
+                  className="relative rounded-lg border border-[color:var(--border)] border-dashed aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98] hover:border-primary/50"
                   onClick={async () => {
                     setSelectedRoomItem({ type: "printer", item: null });
                     setHeaderAssign(true);
@@ -226,24 +263,39 @@ export default function Room() {
                       setRoomItemLoading(false);
                     }
                   }}
-                  disabled={roomItemLoading}
-                  className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Assign printer"
+                  aria-label="Assign printer"
                 >
-                  {roomItemLoading && selectedRoomItem?.type === 'printer' ? <LoadingSpinner /> : 'Assign'}
-                </button>
+                  <div className="flex flex-col items-center gap-2 text-center px-2">
+                    <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                      {roomItemLoading && selectedRoomItem?.type === 'printer' ? <LoadingSpinner /> : <FiPlus size={28} className="opacity-80" />}
+                    </div>
+                    <div className="text-sm sm:text-base font-medium">Add New</div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {printer.length > 0 ? printer.map((p: Printer) => {
-                  const label = p?.name || `Printer ${p?.id}`;
-                  const Icon = iconMap["printer"] ?? FiPrinter;
+            </div>
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-3 border-b border-[color:var(--border)] pb-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium">Almari</h3>
+                  <span className="px-2 py-0.5 text-xs rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)]">{almaris.length}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {almaris.length > 0 ? almaris.map((a: Almari) => {
+                  const label = a?.name || `Almari ${a?.id}`;
+                  const Icon = iconMap["Almari"] ?? FiArchive;
                   return (
                     <div
-                      key={p?.id}
-                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)]"
-                      onClick={() => setSelectedRoomItem({ type: "printer", item: p })}
+                      key={a?.id}
+                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98]"
+                      onClick={() => setSelectedRoomItem({ type: "almari", item: a })}
                     >
                       <div className="flex flex-col items-center gap-2 text-center px-2">
-                        <Icon size={28} className="opacity-80" />
+                        <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                          <Icon size={28} className="opacity-80" />
+                        </div>
                         <div className="text-sm sm:text-base font-medium">{label}</div>
                       </div>
                     </div>
@@ -251,12 +303,8 @@ export default function Room() {
                 }) : (
                   null
                 )}
-              </div>
-            </div>
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium">Almari</h3>
-                <button
+                <div
+                  className="relative rounded-lg border border-[color:var(--border)] border-dashed aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98] hover:border-primary/50"
                   onClick={async () => {
                     setSelectedRoomItem({ type: "almari", item: null });
                     setHeaderAssign(true);
@@ -271,24 +319,39 @@ export default function Room() {
                       setRoomItemLoading(false);
                     }
                   }}
-                  disabled={roomItemLoading}
-                  className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Assign almari"
+                  aria-label="Assign almari"
                 >
-                  {roomItemLoading && selectedRoomItem?.type === 'almari' ? <LoadingSpinner /> : 'Assign'}
-                </button>
+                  <div className="flex flex-col items-center gap-2 text-center px-2">
+                    <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                      {roomItemLoading && selectedRoomItem?.type === 'almari' ? <LoadingSpinner /> : <FiPlus size={28} className="opacity-80" />}
+                    </div>
+                    <div className="text-sm sm:text-base font-medium">Add New</div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {almaris.length > 0 ? almaris.map((a: Almari) => {
-                  const label = a?.name || `Almari ${a?.id}`;
-                  const Icon = iconMap["Almari"] ?? FiArchive;
+            </div>
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-3 border-b border-[color:var(--border)] pb-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium">Bookshelf</h3>
+                  <span className="px-2 py-0.5 text-xs rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)]">{bookshelf.length}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {bookshelf.length > 0 ? bookshelf.map((b: Bookshelf) => {
+                  const label = b?.name || `Bookshelf ${b?.id}`;
+                  const Icon = iconMap["Bookshelf"] ?? FiBook;
                   return (
                     <div
-                      key={a?.id}
-                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)]"
-                      onClick={() => setSelectedRoomItem({ type: "almari", item: a })}
+                      key={b?.id}
+                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98]"
+                      onClick={() => setSelectedRoomItem({ type: "bookshelf", item: b })}
                     >
                       <div className="flex flex-col items-center gap-2 text-center px-2">
-                        <Icon size={28} className="opacity-80" />
+                        <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                          <Icon size={28} className="opacity-80" />
+                        </div>
                         <div className="text-sm sm:text-base font-medium">{label}</div>
                       </div>
                     </div>
@@ -296,12 +359,8 @@ export default function Room() {
                 }) : (
                   null
                 )}
-              </div>
-            </div>
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium">Bookshelf</h3>
-                <button
+                <div
+                  className="relative rounded-lg border border-[color:var(--border)] border-dashed aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)] shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/30 active:scale-[0.98] hover:border-primary/50"
                   onClick={async () => {
                     setSelectedRoomItem({ type: "bookshelf", item: null });
                     setHeaderAssign(true);
@@ -316,31 +375,16 @@ export default function Room() {
                       setRoomItemLoading(false);
                     }
                   }}
-                  disabled={roomItemLoading}
-                  className="px-2 py-1 text-xs rounded border border-[color:var(--border)] hover:bg-[color:var(--surface-muted)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Assign bookshelf"
+                  aria-label="Assign bookshelf"
                 >
-                  {roomItemLoading && selectedRoomItem?.type === 'bookshelf' ? <LoadingSpinner /> : 'Assign'}
-                </button>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {bookshelf.length > 0 ? bookshelf.map((b: Bookshelf) => {
-                  const label = b?.name || `Bookshelf ${b?.id}`;
-                  const Icon = iconMap["Bookshelf"] ?? FiBook;
-                  return (
-                    <div
-                      key={b?.id}
-                      className="relative rounded-lg border border-[color:var(--border)] aspect-square flex items-center justify-center cursor-pointer bg-[color:var(--surface)] hover:bg-[color:var(--surface-muted)]"
-                      onClick={() => setSelectedRoomItem({ type: "bookshelf", item: b })}
-                    >
-                      <div className="flex flex-col items-center gap-2 text-center px-2">
-                        <Icon size={28} className="opacity-80" />
-                        <div className="text-sm sm:text-base font-medium">{label}</div>
-                      </div>
+                  <div className="flex flex-col items-center gap-2 text-center px-2">
+                    <div className="rounded-full p-2 bg-[color:var(--surface-muted)]">
+                      {roomItemLoading && selectedRoomItem?.type === 'bookshelf' ? <LoadingSpinner /> : <FiPlus size={28} className="opacity-80" />}
                     </div>
-                  );
-                }) : (
-                  null
-                )}
+                    <div className="text-sm sm:text-base font-medium">Add New</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
