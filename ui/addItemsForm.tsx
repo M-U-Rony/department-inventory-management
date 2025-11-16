@@ -24,7 +24,13 @@ interface FormState {
   note: string;
 }
 
-export default function AddItemsForm({ onClose, title, mode = "add", itemId, initial }: AddItemsFormProps) {
+export default function AddItemsForm({
+  onClose,
+  title,
+  mode = "add",
+  itemId,
+  initial,
+}: AddItemsFormProps) {
   const [form, setForm] = useState<FormState>({
     name: initial?.name ?? "",
     brand: initial?.brand ?? "",
@@ -70,7 +76,9 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
         toast.error(isEdit ? "Failed to update item" : "Failed to add item");
       }
 
-      toast.success(isEdit ? "Item updated successfully!" : "Item added successfully!");
+      toast.success(
+        isEdit ? "Item updated successfully!" : "Item added successfully!"
+      );
 
       window.location.reload();
 
@@ -110,29 +118,27 @@ export default function AddItemsForm({ onClose, title, mode = "add", itemId, ini
             </div>
           </div>
 
-          { (title === "cpu" || title === "monitor" || title == "printer") && (
-            
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <label className="text-sm muted-text w-40 sm:w-48">
-              Brand Name
-            </label>
-            <div className="flex-1">
-              <input
-                value={form.brand}
-                onChange={(e) => update("brand", e.target.value)}
-                placeholder=""
-                list="brandOptions"
-                className="w-full rounded-lg border border-[var(--border)] bg-[color:var(--surface-muted)]/60 focus:bg-[color:var(--surface)] px-3 py-2.5 text-[color:var(--text)] placeholder:text-[color:var(--text-muted)] outline-none focus:ring-2 focus:ring-[color:var(--accent)] text-sm"
-              />
-              <datalist id="brandOptions">
-                <option value="HP" />
-                <option value="ASUS" />
-                <option value="Dell" />
-              </datalist>
+          {(title === "cpu" || title === "monitor" || title == "printer") && (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <label className="text-sm muted-text w-40 sm:w-48">
+                Brand Name
+              </label>
+              <div className="flex-1">
+                <input
+                  value={form.brand}
+                  onChange={(e) => update("brand", e.target.value)}
+                  placeholder=""
+                  list="brandOptions"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[color:var(--surface-muted)]/60 focus:bg-[color:var(--surface)] px-3 py-2.5 text-[color:var(--text)] placeholder:text-[color:var(--text-muted)] outline-none focus:ring-2 focus:ring-[color:var(--accent)] text-sm"
+                />
+                <datalist id="brandOptions">
+                  <option value="HP" />
+                  <option value="ASUS" />
+                  <option value="Dell" />
+                </datalist>
+              </div>
             </div>
-          </div>
-          )
-          }
+          )}
 
           {title === "cpu" ? (
             <>

@@ -16,7 +16,6 @@ export async function GET(req: Request) {
         const itemId = Number(id);
         const deskIdNum = Number(deskId);
 
-        // Update the appropriate item type based on the item parameter
         switch (item.toLowerCase()) {
             case "cpu":
                 result = await prisma.cpu.update({

@@ -2,7 +2,7 @@ export interface BaseRoomItem {
   id: number;
   name: string;
   status: string;
-  Note: string | null;
+  note: string | null;
   roomId?: number | null;
   createdAt?: string;
   updatedAt?: string;

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useParams } from "next/navigation";
 import { Item, ItemKey, ItemValue } from "../types/item";
-import LoadingSpinner from "../components/loadingSpinner";
 import AddItemsForm from "./addItemsForm";
 
 export default function About({
@@ -54,13 +53,16 @@ export default function About({
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch(`/api/secure/updateitem?item=${params.manage}&id=${data.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedData),
-      });
+      const res = await fetch(
+        `/api/secure/updateitem?item=${params.manage}&id=${data.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedData),
+        }
+      );
       if (res.status === 401) {
         if (typeof window !== "undefined") window.location.href = "/signin";
         return;
@@ -113,7 +115,9 @@ export default function About({
                 if (key === "id" || key === "desk") return null;
 
                 const isEditableField =
-                  key !== "createdAt" && key !== "updatedAt" && key !== "location";
+                  key !== "createdAt" &&
+                  key !== "updatedAt" &&
+                  key !== "location";
 
                 return (
                   <div className="flex flex-col" key={key}>

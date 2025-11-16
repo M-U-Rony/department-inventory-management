@@ -14,7 +14,6 @@ export async function GET(req: Request) {
 
         let result;
         const itemId = Number(id);
-        const deskIdNum = Number(deskId);
 
         switch (item.toLowerCase()) {
             case "cpu":

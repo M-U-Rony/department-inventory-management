@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
         if (item == "cpu") {
 
-            const newCpu = await prisma.cpu.create({
+                const newCpu = await prisma.cpu.create({
                 data: {
                     name,
                     brand,
@@ -28,11 +28,9 @@ export async function POST(req: Request) {
                     ssd,
                     gpu,
                     status,
-                    Note: note,
+                    note: note,
                 },
-            });
-
-            return NextResponse.json(newCpu, { status: 201 });
+            });            return NextResponse.json(newCpu, { status: 201 });
         }
         else {
 
@@ -43,7 +41,7 @@ export async function POST(req: Request) {
                         name,
                         brand,
                         status,
-                        Note: note,
+                        note: note,
                     },
                 });
 
@@ -58,7 +56,7 @@ export async function POST(req: Request) {
                         name,
                         brand,
                         status,
-                        Note: note,
+                        note: note,
                     },
                 });
 
@@ -74,7 +72,7 @@ export async function POST(req: Request) {
                     data: {
                         name,
                         status,
-                        Note: note,
+                        note: note,
                     },
                 });
 
@@ -87,7 +85,7 @@ export async function POST(req: Request) {
                     data: {
                         name,
                         status,
-                        Note: note,
+                        note: note,
                     },
                 });
 
@@ -100,7 +98,7 @@ export async function POST(req: Request) {
                     data: {
                         name,
                         status,
-                        Note: note,
+                        note: note,
                     },
                 });
 

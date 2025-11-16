@@ -17,14 +17,11 @@ export async function GET(req: Request) {
                         monitor: true,
                     },
                     orderBy: {
-                        id: "asc", // fetch desks in ascending order
+                        id: "asc", 
                     },
                 },
             },
         });
-
-
-        // console.log("Fetched labs:", labs);
 
         return NextResponse.json(labs?.desks, { status: 200 });
     } catch (error) {
