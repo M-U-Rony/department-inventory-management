@@ -85,13 +85,14 @@ export default function Home() {
       {/*sidebar*/}
       <Sidebar labs={labs} rooms={rooms} onNewLab={onNewLab}/>
 
-      <div className="flex flex-wrap gap-x-6 gap-y-10 mt-16 mb-16 ml-2">
+      <div className="mt-15 mb-8 grid grid-cols-2  gap-6 md:grid-cols-4">
         <SummaryCard title="CPU" items={cpus} />
         <SummaryCard title="MONITOR" items={monitor} />
         <SummaryCard title="PRINTER" items={printer} />
         <SummaryCard title="UPS" items={ups} />
-        <SummaryCard title="ALMARI" items={almari} />
+        <SummaryCard title="ALMIRAH" items={almari} />
         <SummaryCard title="BOOKSHELF" items={bookshelf} />
+
       </div>
     </main>
   );

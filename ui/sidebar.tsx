@@ -45,7 +45,7 @@ export default function Sidebar({
   // Check screen size and adjust sidebar
   useEffect(() => {
     const checkScreenSize = () => {
-      const mobile = window.innerWidth < 768;
+      const mobile = window.innerWidth < 1230;
       setIsMobile(mobile);
       setIsCollapsed(mobile);
     };
@@ -62,7 +62,6 @@ export default function Sidebar({
     currentName: string,
     event: React.MouseEvent,
     category: string
-
   ) {
     event.stopPropagation();
     setEditingId(Id);
@@ -113,11 +112,11 @@ export default function Sidebar({
     }
   }
 
-  function handleCreateRoom(){
+  function handleCreateRoom() {
     setShowRoomForm(true);
   }
 
-  async function handleSubmitRoom(){
+  async function handleSubmitRoom() {
     if (!newRoomName.trim()) return;
     setIsRoomCreating(true);
     try {
@@ -155,7 +154,7 @@ export default function Sidebar({
       {isMobile && isCollapsed && (
         <button
           onClick={toggleSidebar}
-          className="md:hidden fixed top-4 left-4 z-30 p-2 rounded-md bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:bg-[var(--surface-muted)] transition"
+          className="fixed top-4 left-4 z-30 p-2 rounded-md bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:bg-[var(--surface-muted)] transition"
         >
           <FiMenu size={18} />
         </button>
@@ -163,10 +162,14 @@ export default function Sidebar({
 
       {/* Sidebar */}
       <div
-        className={`fixed md:relative top-0 left-0 h-screen transition-all duration-300 z-20 border-r border-[var(--border)] bg-[var(--surface)] shadow-md md:shadow-none overflow-x-hidden shrink-0
+        className={`${
+          isMobile ? "fixed" : "md:relative"
+        } top-0 left-0 h-screen transition-all duration-300 z-20 border-r border-[var(--border)] bg-[var(--surface)] shadow-md overflow-x-hidden shrink-0
         ${
           isCollapsed
-            ? "-translate-x-full md:translate-x-0 md:w-16 md:min-w-[4rem] md:max-w-[4rem]"
+            ? isMobile
+              ? "-translate-x-full"
+              : "md:translate-x-0 md:w-16 md:min-w-[4rem] md:max-w-[4rem]"
             : "translate-x-0 w-64 min-w-[16rem] max-w-[16rem]"
         }`}
       >
@@ -208,7 +211,6 @@ export default function Sidebar({
           {labs.length > 0 &&
             labs.map((lab, i) => (
               <div key={i} className="space-y-2">
-              
                 {editingId === lab.id && category === "lab" && !isCollapsed ? (
                   <div className="px-3 py-2 space-y-2">
                     <input
@@ -260,16 +262,16 @@ export default function Sidebar({
                           {lab.name}
                         </span>
                         <button
-                          onClick={(e) => handleEditName(lab.id, lab.name, e,"lab")}
+                          onClick={(e) =>
+                            handleEditName(lab.id, lab.name, e, "lab")
+                          }
                           className="p-1 rounded hover:bg-[var(--surface-muted)] transition cursor-pointer"
                         >
                           <FiEdit2 />
                         </button>
                       </>
                     ) : (
-                      <span className="mx-auto text-sm font-medium truncate max-w-full">
-                        {lab.name}
-                      </span>
+                      <FiMonitor size={20} className="mx-auto" />
                     )}
                   </div>
                 )}
@@ -277,9 +279,7 @@ export default function Sidebar({
             ))}
         </div>
 
-
-
-         {/* Teacher's Room Section */}
+        {/* Teacher's Room Section */}
 
         <div className="p-4 space-y-3">
           <div className="flex justify-between items-center px-3 py-2 rounded hover:bg-[var(--surface-muted)] transition">
@@ -288,7 +288,7 @@ export default function Sidebar({
                 <span className="font-medium text-sm">Teacher's Room</span>
                 <button
                   className="p-1 rounded hover:bg-[var(--surface-muted)] cursor-pointer"
-                 onClick={handleCreateRoom}
+                  onClick={handleCreateRoom}
                 >
                   <FiPlus />
                 </button>
@@ -331,7 +331,10 @@ export default function Sidebar({
                 </button>
                 <button
                   className="flex items-center gap-1 px-3 py-2 rounded text-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] transition"
-                  onClick={() => { setShowRoomForm(false); setNewRoomName(""); }}
+                  onClick={() => {
+                    setShowRoomForm(false);
+                    setNewRoomName("");
+                  }}
                 >
                   <FiX /> Cancel
                 </button>
@@ -344,7 +347,9 @@ export default function Sidebar({
             rooms.map((room, i) => (
               <div key={i} className="space-y-2">
                 {/* Edit Input (when in edit mode) */}
-                {editingId === room.id && category === "room" && !isCollapsed ? (
+                {editingId === room.id &&
+                category === "room" &&
+                !isCollapsed ? (
                   <div className="px-3 py-2 space-y-2">
                     <input
                       type="text"
@@ -384,7 +389,6 @@ export default function Sidebar({
                     </div>
                   </div>
                 ) : (
-            
                   <div
                     onClick={() => router.push(`room/${room.name}`)}
                     className="flex justify-between items-center px-3 py-2 rounded cursor-pointer hover:bg-[var(--surface-muted)] transition"
@@ -395,23 +399,22 @@ export default function Sidebar({
                           {room.name}
                         </span>
                         <button
-                          onClick={(e) => handleEditName(room.id, room.name, e,"room")}
+                          onClick={(e) =>
+                            handleEditName(room.id, room.name, e, "room")
+                          }
                           className="p-1 rounded hover:bg-[var(--surface-muted)] transition cursor-pointer"
                         >
                           <FiEdit2 />
                         </button>
                       </>
                     ) : (
-                      <span className="mx-auto text-sm font-medium">
-                        {room.name}
-                      </span>
+                      <FiMonitor size={20} className="mx-auto" />
                     )}
                   </div>
                 )}
               </div>
             ))}
         </div>
-
       </div>
 
       {/* Overlay for mobile */}

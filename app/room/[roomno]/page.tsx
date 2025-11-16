@@ -278,7 +278,7 @@ export default function Room() {
             <div className="mt-6">
               <div className="flex items-center justify-between mb-3 border-b border-[color:var(--border)] pb-2">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium">Almari</h3>
+                  <h3 className="text-sm font-medium">Almirah</h3>
                   <span className="px-2 py-0.5 text-xs rounded-full border border-[color:var(--border)] bg-[color:var(--surface-muted)]">{almaris.length}</span>
                 </div>
               </div>
