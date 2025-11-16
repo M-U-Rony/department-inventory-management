@@ -31,6 +31,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: _id, createdAt, updatedAt, ...data } = body;
 
     // Remove null desk and location
@@ -40,9 +41,10 @@ export async function PUT(req: NextRequest) {
     // Filter to only allowed fields
     const allowedFields = ITEM_TYPES[itemType as keyof typeof ITEM_TYPES].fields;
     const dataToUpdate = Object.fromEntries(
-      Object.entries(data).filter(([key]) => allowedFields.includes(key as any))
+      Object.entries(data).filter(([key]) => (allowedFields as readonly string[]).includes(key))
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const model = (prisma as any)[itemType];
     const updatedItem = await model.update({
       where: { id: numId },

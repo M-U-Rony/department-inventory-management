@@ -577,7 +577,7 @@ export default function Room() {
                       </span>
                     </div>
                   )}
-                  {selectedRoomItem.item.Note ? (
+                  {selectedRoomItem.item.note ? (
                     <div className="text-sm flex items-center gap-2">
                       <span className="text-gray-500">Note:</span>
                       <span>{selectedRoomItem.item.note}</span>
