@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { HiComputerDesktop } from "react-icons/hi2";
 import LoadingSpinner from "../components/loadingSpinner";
+import { useRouter } from "next/navigation";
 
 interface LabCreationFormProps {
   onSuccess?: () => void;
 }
 
 export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     layout: "",
@@ -63,7 +65,7 @@ export default function LabCreationForm({ onSuccess }: LabCreationFormProps) {
       });
 
       if (response.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
 

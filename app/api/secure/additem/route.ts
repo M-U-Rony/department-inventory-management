@@ -30,7 +30,9 @@ export async function POST(req: Request) {
                     status,
                     note: note,
                 },
-            });            return NextResponse.json(newCpu, { status: 201 });
+            });
+            
+            return NextResponse.json(newCpu, { status: 201 });
         }
         else {
 
@@ -108,10 +110,6 @@ export async function POST(req: Request) {
             else {
                 return NextResponse.json({ error: "Invalid item type" }, { status: 400 });
             }
-
-
-
-
         }
     } catch (error) {
         console.error("Error creating new CPU:", error);

@@ -3,6 +3,7 @@
 import LoadingSpinner from "../components/loadingSpinner";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface AddItemsFormProps {
   onClose?: () => void;
@@ -31,6 +32,7 @@ export default function AddItemsForm({
   itemId,
   initial,
 }: AddItemsFormProps) {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>({
     name: initial?.name ?? "",
     brand: initial?.brand ?? "",
@@ -68,7 +70,7 @@ export default function AddItemsForm({
       });
 
       if (res.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
 
@@ -80,7 +82,7 @@ export default function AddItemsForm({
         isEdit ? "Item updated successfully!" : "Item added successfully!"
       );
 
-      window.location.reload();
+      router.refresh();
 
       if (onClose) onClose();
     } catch (error) {

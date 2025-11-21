@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Desk } from "../types/desk";
 import { IoMdClose } from "react-icons/io";
 import LoadingSpinner from "../components/loadingSpinner";
+import { useRouter } from "next/navigation";
 
 interface DeskInfoProps {
   desk?: Desk;
@@ -21,6 +22,7 @@ export default function DeskInfo({
   handleCloseModal,
   onAssignOrWithdraw,
 }: DeskInfoProps) {
+  const router = useRouter();
   const [unassignedItems, setUnassignedItems] = useState<Item[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [currentItemType, setCurrentItemType] = useState("");
@@ -49,7 +51,7 @@ export default function DeskInfo({
       });
 
       if (data.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
       const items = await data.json();
@@ -80,7 +82,7 @@ export default function DeskInfo({
       );
 
       if (response.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
       if (!response.ok) {
@@ -115,7 +117,7 @@ export default function DeskInfo({
       );
 
       if (response.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
       if (!response.ok) {

@@ -91,7 +91,7 @@ export default function Sidebar({
         });
 
         if (res.status === 401) {
-          if (typeof window !== "undefined") window.location.href = "/signin";
+          router.push("/signin");
           return;
         }
 
@@ -127,7 +127,7 @@ export default function Sidebar({
       });
 
       if (res.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
 

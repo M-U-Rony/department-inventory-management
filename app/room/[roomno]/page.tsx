@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import BackButton from "../../../components/backButton";
 import LoadingSpinner from "../../../components/loadingSpinner";
 import DeskInfo from "../../../ui/deskInfo";
@@ -27,6 +27,7 @@ import { HiComputerDesktop } from "react-icons/hi2";
 
 export default function Room() {
   const params = useParams();
+  const router = useRouter();
   const [roomId, setRoomId] = useState<number | undefined>(undefined);
   const [desks, setDesks] = useState<Desk[]>([]);
   const [almaris, setAlmaris] = useState<Almari[]>([]);
@@ -134,7 +135,7 @@ export default function Room() {
     });
 
     if (res.status === 401) {
-      if (typeof window !== "undefined") window.location.href = "/signin";
+      router.push("/signin");
       return;
     }
 
@@ -203,8 +204,7 @@ export default function Room() {
                               );
 
                               if (res.status === 401) {
-                                if (typeof window !== "undefined")
-                                  window.location.href = "/signin";
+                                router.push("/signin");
                                 return;
                               }
 
@@ -302,8 +302,7 @@ export default function Room() {
                       );
 
                       if (res.status === 401) {
-                        if (typeof window !== "undefined")
-                          window.location.href = "/signin";
+                        router.push("/signin");
                         return;
                       }
 
@@ -380,8 +379,7 @@ export default function Room() {
                       );
 
                       if (res.status === 401) {
-                        if (typeof window !== "undefined")
-                          window.location.href = "/signin";
+                        router.push("/signin");
                         return;
                       }
 
@@ -458,8 +456,7 @@ export default function Room() {
                       );
 
                       if (res.status === 401) {
-                        if (typeof window !== "undefined")
-                          window.location.href = "/signin";
+                        router.push("/signin");
                         return;
                       }
 
@@ -596,8 +593,7 @@ export default function Room() {
                           );
 
                           if (res.status === 401) {
-                            if (typeof window !== "undefined")
-                              window.location.href = "/signin";
+                            router.push("/signin");
                             return;
                           }
 
@@ -620,8 +616,7 @@ export default function Room() {
                             );
 
                             if (res.status === 401) {
-                              if (typeof window !== "undefined")
-                                window.location.href = "/signin";
+                              router.push("/signin");
                               return;
                             }
 
@@ -659,8 +654,7 @@ export default function Room() {
                             );
 
                             if (res.status === 401) {
-                              if (typeof window !== "undefined")
-                                window.location.href = "/signin";
+                              router.push("/signin");
                               return;
                             }
 

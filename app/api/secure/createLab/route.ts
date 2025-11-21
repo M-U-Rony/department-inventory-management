@@ -3,13 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-
-    const body = await req.text();
-    if (!body) {
-      return NextResponse.json({ message: "Request body is empty" }, { status: 400 });
-    }
-
-    const { name, layout, rows } = JSON.parse(body);
+    
+    const body = await req.json();
+    const { name, layout, rows } = body;
 
     if (!name || !layout || !rows) {
       return NextResponse.json({ message: "Lab name is required" }, { status: 400 });
@@ -27,7 +23,7 @@ export async function POST(req: Request) {
       labId: lab.id,
     }));
 
-    const desks = await prisma.desk.createMany({
+    await prisma.desk.createMany({
       data: desksData,
     });
 

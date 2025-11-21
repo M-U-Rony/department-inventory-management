@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Item, ItemKey, ItemValue } from "../types/item";
 import AddItemsForm from "./addItemsForm";
 
@@ -13,6 +13,7 @@ export default function About({
   onClose: () => void;
 }) {
   const params = useParams<{ manage: string }>();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(data);
   const [isSaving, setIsSaving] = useState(false);
@@ -64,12 +65,12 @@ export default function About({
         }
       );
       if (res.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
       setIsEditing(false);
       onClose();
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error("Failed to update item:", error);
     } finally {

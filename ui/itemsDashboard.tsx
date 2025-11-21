@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { MdDelete } from "react-icons/md";
 import About from "./about";
 import { useState } from "react";
@@ -15,6 +15,7 @@ interface ItemsDashboardProps {
 
 export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
   const params = useParams<{ manage: string }>();
+  const router = useRouter();
   const [showInformation, setshowInformation] = useState(false);
   // Initialize showItem with null and provide the type
   const [showItem, setshowItem] = useState<Item | null>(null);
@@ -49,7 +50,7 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
       );
 
       if (res.status === 401) {
-        if (typeof window !== "undefined") window.location.href = "/signin";
+        router.push("/signin");
         return;
       }
 
@@ -61,7 +62,7 @@ export default function ItemsDashboard({ onAdd, items }: ItemsDashboardProps) {
     } catch (err) {
       console.log(err);
     }
-    window.location.reload();
+    router.refresh();
   };
 
   return (

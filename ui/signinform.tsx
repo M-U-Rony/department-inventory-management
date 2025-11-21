@@ -1,4 +1,5 @@
 import LoadingSpinner from "../components/loadingSpinner";
+import type { ZodIssue } from "zod";
 
 interface SigninFormProps {
   setUsername: React.Dispatch<React.SetStateAction<string>>;
@@ -7,6 +8,7 @@ interface SigninFormProps {
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   username: string;
   password: string;
+  errors: ZodIssue[];
 }
 
 export default function SigninForm({
@@ -16,8 +18,10 @@ export default function SigninForm({
   handleSubmit,
   username,
   password,
+  errors,
 }: SigninFormProps) {
   return (
+    
     <div className="w-full max-w-md card-surface rounded-xl p-5 sm:p-6 shadow-sm">
       <div className="mb-5 sm:mb-6">
         <h1 className="text-lg sm:text-xl font-semibold">Sign in Required</h1>
@@ -43,6 +47,10 @@ export default function SigninForm({
             className="w-full rounded-lg border border-[var(--border)] bg-[color:var(--surface-muted)]/60 focus:bg-[color:var(--surface)] px-3 py-2.5 text-[color:var(--text)] placeholder:text-[color:var(--text-muted)] outline-none focus:ring-2 focus:ring-[color:var(--accent)] text-sm sm:text-base"
             placeholder="Enter your username"
           />
+         {errors?.[0]?.message && (
+  <p className="text-red-500 text-xs">{errors[0].message}</p>
+)}
+          
         </div>
 
         <div>
@@ -64,6 +72,10 @@ export default function SigninForm({
             className="w-full rounded-lg border border-[var(--border)] bg-[color:var(--surface-muted)]/60 focus:bg-[color:var(--surface)] px-3 py-2.5 text-[color:var(--text)] placeholder:text-[color:var(--text-muted)] outline-none focus:ring-2 focus:ring-[color:var(--accent)] text-sm sm:text-base"
             placeholder="Enter your password"
           />
+          {errors?.[1]?.message && (
+  <p className="text-red-500 text-xs">{errors[1].message}</p>
+)}
+
         </div>
 
         <button

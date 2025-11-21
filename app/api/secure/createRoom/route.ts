@@ -3,15 +3,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-
-    const body = await req.text();
-    if (!body) {
-      return NextResponse.json({ message: "Request body is empty" }, { status: 400 });
-    }
-
-    const { name} = JSON.parse(body);
-
-    // console.log(name);
+    const body = await req.json();
+    const { name } = body;
 
     if (!name) {
       return NextResponse.json({ message: "Room name is required" }, { status: 400 });
